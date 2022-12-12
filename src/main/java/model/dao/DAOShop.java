@@ -122,8 +122,8 @@ public class DAOShop {
 				DTOShop d = new DTOShop();
 				d.setpName(rs.getString(1));
 				System.out.println(d.getpName());
-				d.setSum(rs.getInt(2));
-				System.out.println(d.getSum());
+				//d.setSum(rs.getInt(2));
+				//System.out.println(d.getSum());
 				chart.add(d);				
 			}			
 			return chart;
@@ -141,6 +141,84 @@ public class DAOShop {
 		}
 		return null;
 	}
+	
+	public String getProductImg(HttpServletRequest req) {
+		PreparedStatement pstmt =null;
+		Connection con = null;
+		ResultSet rs=null;
+		String sql = null;	
+		String img = null;		
+		try {
+			con=DBConnection.getconn();
+			sql="select*form product where pID=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1,req.getParameter("pid"));
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				img = rs.getString("pImg");
+			}			
+			System.out.println("img:"+img);
+			return img;			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+				if(rs!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		return null;
+		
+	}
+	//상품리스트 불러오기
+	public ArrayList<DTOShop> productAdminlist(HttpServletRequest req) {
+		HttpSession session=req.getSession();
+		String id = (String)session.getAttribute("id");
+		PreparedStatement pstmt =null;
+		Connection con = null;
+		String sql = null;
+		ResultSet rs = null;
+		ArrayList<DTOShop> list = new ArrayList<DTOShop>();		
+		try {
+			con = DBConnection.getconn();
+			sql ="select * from product where id =?";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				DTOShop d = new DTOShop();
+				d.setpId(rs.getString("pID"));
+				d.setpName(rs.getString("pName"));
+				d.setpPrice(rs.getInt("pPrice"));
+				d.setOrderCnt(rs.getInt("orderCnt"));
+				d.setSum(rs.getInt("orderCnt"), rs.getInt("pPrice"));
+				list.add(d);
+				System.out.println("총액:"+d.getSum()); 
+			}
+			
+			System.out.println(id);
+			
+			System.out.println("상품리스트 불러오기");
+			return list;
+		}catch (Exception e) {
+			System.out.println("상품리스트 불러오기 오류");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+				if(rs!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		return null;	
+	}
+	
+	
 
 }
  

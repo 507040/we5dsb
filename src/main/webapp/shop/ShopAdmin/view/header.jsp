@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%String URI = request.getRequestURI();
 int urllen = URI.length();
 int cxvz= URI.lastIndexOf("/")+1;
@@ -57,7 +58,7 @@ String accheck = URI.substring(cxvz,urllen);
   </head>
   <body id="shopBody">
     
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+<nav class="navbar navbar-dark sticky-top bg-dark flex-nowrap p-0 shadow" id="nav">
   <a class="navbar-brand col-3 col-2 mr-0 px-3" href="/ShopadminPage.pn"><%=session.getAttribute("nicname")%></a>  
   <ul class="navbar-nav px-3">  	
     <li class="nav-item text-nowrap" style="display:flex;flex-wrap: nowrap;">
@@ -91,9 +92,9 @@ String accheck = URI.substring(cxvz,urllen);
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/Productadmin.pn" <%if(accheck.equals("productList.jsp")){%>id="av"<%}%>> 
               <span style="width: 24px;height: 24px;vertical-align: bottom;color: gray;font-size: 17px;margin-right: 2px;">
-            	<i class="bi bi-cart"></i>&nbsp;
+            	<i class="bi bi-cart" <%if(accheck.equals("productList.jsp")){%>id="av"<%}%>></i>&nbsp;
             </span>
               상품관리
             </a>

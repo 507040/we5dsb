@@ -23,8 +23,8 @@ public class DTOShop {
 	public int getSum() {
 		return sum;
 	}
-	public void setSum(int sum) {
-		this.sum = sum;
+	public void setSum(int cnt,int price) {
+		this.sum = cnt*price;
 	}
 	public String getpId() {
 		return pId;

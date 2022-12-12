@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@include file="header.jsp" %>
     <main role="main" class="col-9 ml-sm-auto col-10 px-4" style="min-height:100%;height: auto">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <div class="d-flex justify-content-between flex-wrap flex-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2">상품등록</h1>
       </div>
       
@@ -58,16 +58,22 @@
     <script src="/shop/ShopAdmin/assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script type="text/javascript">
-    //이미지 미리보기
-    var sel_file;
+    //이미지 미리보기 
  
-    $(document).ready(function() {
+    $(document).ready(function() { 
+    	
+    	var sel_file;
     	
     	var screenH=screen.height;
+    	var screenW=screen.width;
     	$('#shopBody').css("height",screenH);
-    	$('#sidebarMenu').css("height",screenH);
-        $("#files").on("change", handleImgFileSelect);        
+    	$('#shopBody').css("width",screenW);
+    	$('#sidebarMenu').css("height",screenH);     
+    	$('#nav').css("width",screenW);
+    	
+    	$("#files").on("change", handleImgFileSelect);
     });
+    
  
     function handleImgFileSelect(e) {   	
     	var File = $("#files").val();

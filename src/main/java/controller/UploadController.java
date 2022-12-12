@@ -86,7 +86,7 @@ public class UploadController extends HttpServlet{
 		
 		//String realFolderPath = "C:\\Users\\KTE-038\\git\\project\\src\\main\\webapp\\resources\\" + dirDate + "\\" + dirDate2 + "";
 		//String realFolderPath = "D:\\jspStudy2\\project123\\src\\main\\webapp\\resources\\img\\" +dirDate+"\\"+dirDate2+"";//업로드 위치
-		String realFolderPath = "D:\\jspStudy2\\project123\\src\\main\\webapp\\resources\\img\\product";//업로드 위치
+		String realFolderPath = "C:\\Users\\wjddb\\git\\we5dsb\\src\\main\\webapp\\resources\\img\\product";//업로드 위치
 		//String realFolderPath = "C:\\upload\\"+dirDate+"\\"+dirDate2+"";//업로드 위치		
 		File Folder = new File(realFolderPath);		
 		// 해당 디렉토리가 없을경우 디렉토리를 생성합니다.
@@ -151,8 +151,7 @@ public class UploadController extends HttpServlet{
 		System.out.println("업로드 파일 디렉토리 : "+filepath);
 		String encType = "utf-8";
 		int maxSize = 5 * 1024 * 1024;
-		DefaultFileRenamePolicy policy = new DefaultFileRenamePolicy();	
-		
+		DefaultFileRenamePolicy policy = new DefaultFileRenamePolicy();	 		
 		
 		MultipartRequest multi = new MultipartRequest(req,realFolder,maxSize,encType,policy);
 		
@@ -166,8 +165,7 @@ public class UploadController extends HttpServlet{
 		String fileUploadName= today+profile_name;		
 		File f = new File(filepath+profile_name); //업로드된 파일 생성 
 		File r = new File(filepath+fileUploadName); 
-		f.renameTo(r); //업로드된 파일명 변환			
-		
+		f.renameTo(r); //업로드된 파일명 변환	
 		
 		System.out.println("사용자가 올린 파일명:"+profile_name);		
 		System.out.println("변경된 파일이름,경로:"+r);	
@@ -182,7 +180,8 @@ public class UploadController extends HttpServlet{
 	}	
 	//파일 삭제
 	public void deleteProduct(HttpServletRequest req,String realFolder) {	
-		String bFile = req.getParameter("beFile");
+		DAOShop dao = DAOShop.getInstence();		
+		String bFile = dao.getProductImg(req);
 		String filepath = realFolder+"\\";
 		String path = filepath+bFile;
 		System.out.println(path);
@@ -194,13 +193,16 @@ public class UploadController extends HttpServlet{
 			}else {
 				Files.deleteIfExists(filePath);
 				System.out.println("선택파일 delete:"+path);
-			}
-			
+			}			
 		}catch (Exception e) {
 			System.out.println("파일 지우기 오류");
 			e.printStackTrace();
 		}		
 	}
+	public void getProductImg(HttpServletRequest req) {
+		
+	}
+	
 	
 	//DB에 이미지 파일 업로드
 	public void DBupload(HttpServletRequest req) {

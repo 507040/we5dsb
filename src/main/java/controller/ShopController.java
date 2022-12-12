@@ -66,6 +66,11 @@ public class ShopController extends HttpServlet {
 			getchart(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/shopadminmain.jsp");
 			rd.forward(req, resp);			
+		}else if(command.equals("/Productadmin.pn")) {
+			productAdmin(req);
+			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/productList.jsp");
+			rd.forward(req, resp);	
+			
 		}
 		
 	}
@@ -153,6 +158,12 @@ public class ShopController extends HttpServlet {
 			System.out.println("상품:"+l.getpName()+"가격:"+l.getSum());
 		}
 		req.setAttribute("Chart", s);		
+	}
+	//상품관리 메인
+	public void productAdmin(HttpServletRequest req) {
+		DAOShop DAO = DAOShop.getInstence();
+		ArrayList<DTOShop> pl =DAO.productAdminlist(req);
+		req.setAttribute("productlist", pl);
 	}
 }
 

@@ -23,7 +23,7 @@ if(v==null){%>
 	           	<c:set value="${v.pId}" var="pid"/>
 	           	<c:set value="${v.category}" var="category"/>         
 	                <div class="col-md-5 m-0 p-0">
-	                     <img class="img col-12" id="img" src="/resources/img/product/${v.pImg}" style="heihgt:500px;object-fit:cover">
+	                     <img data-img="img" class="img col-12" id="img" src="/resources/img/product/${v.pImg}" style="heihgt:500px;object-fit:cover">
 	                </div>		
 	                <div class="col-md-7">
 	                 <form id="pIfmt"  name="pIfmt" action="/productInsert.up" method="post">
@@ -40,7 +40,7 @@ if(v==null){%>
 							</select>
 	                   	
 	                    <p>가격:<input name="price" name="price" value="${v.pPrice}" placeholder="가격을 입력하세요">
-	                    <p>판매자:${v.nicname }               
+	                    <p>판매자:${v.id }               
 	                    <p>재고수:<input type="number" name="instork" value="${v.pInStork}" placeholder="수량을 입력하세요" min="1" >
 	                    </form>        	                                    
 		                    <p>이미지등록:<input type="file" id="files" name="files"></p>
@@ -64,11 +64,15 @@ if(v==null){%>
     //이미지 미리보기
     var sel_file;
  
-    $(document).ready(function() {
+    $(document).ready(function() {    	
     	var screenH=screen.height;
+    	var screenW=screen.width;
     	$('#shopBody').css("height",screenH);
-    	$('#sidebarMenu').css("height",screenH);
-        $("#files").on("change", handleImgFileSelect);        
+    	$('#shopBody').css("width",screenW);
+    	$('#sidebarMenu').css("height",screenH);     
+    	$('#nav').css("width",screenW);
+    	
+    	$("#files").on("change", handleImgFileSelect);
     });
  
     function handleImgFileSelect(e) {   	
@@ -117,35 +121,8 @@ if(v==null){%>
         });
     }
 </script>
-    
-<script>
-//파일 수정
-function fn_submit(){  
-		var ab = $('#file').val();
-		alert(ab);
-    	
-         jQuery.ajax({
-             url : "/productUpdate.up"
-           , type : "POST"
-           , processData : false
-           , contentType : false
-           , data : bFile="$('#file').val()"
-           , success:function(response) {        	            
-           }
-           ,error: function (jqXHR) 
-           { 
-               alert(jqXHR.responseText); 
-           }
-       });
-       // $('#fmt').submit();
-}
-</script>
-
-</html>
-<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
-<footer>
-    
-</footer>
 </body>
 </html>
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+
 

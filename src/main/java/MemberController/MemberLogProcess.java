@@ -35,8 +35,8 @@ public class MemberLogProcess extends HttpServlet {
 		Connection conn=null;
 		String URL = req.getParameter("URL");
 		String query = req.getParameter("str");		
-		String id= req.getParameter("id");
-		String pass= req.getParameter("pass");
+		String idS= req.getParameter("id");
+		String passs= req.getParameter("pass");
 		String url_str=null;
 		if(query==null) {
 			url_str=URL;			
@@ -49,19 +49,23 @@ public class MemberLogProcess extends HttpServlet {
 
 		try{
 			conn=DBConnection.getconn();	
-			sql="select count(*)as cnt,id as id,nicname as nicname,level as level,profile as profile from member where id=? and pass=?";    				
+			sql="select count(*)as cnt,id as id,nicname as nicname,level as level,profile as profile, pass as pass from member where id=? and pass=?";    				
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.setString(2, pass);
+			pstmt.setString(1, idS);
+			pstmt.setString(2, passs);
 			rs=pstmt.executeQuery();
+			String id = null;
 			String nicname=null;
 			String level=null;
+			String pass = null;
 			String profile=null;
 			int count=0;
 			if(rs.next()){
 				count = rs.getInt("cnt");
-				nicname = rs.getString("id");
+				id = rs.getString("id");
+				nicname = rs.getString("nicname");
 				level = rs.getString("level");
+				pass =rs.getString("pass");
 				profile = rs.getString("profile");
 			}
 				
