@@ -20,8 +20,11 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
                 <p>인기상품</p>                
                 <div class="col-12" style="display: flex;justify-content: space-around;border-radius: 5px;border:1px solid #bbb">
 	                <c:forEach items="<%=cnt %>" var="c"> 
-	                <c:set value="${c.sale}" var="csale"/>	                
-	                    <div class="item-sell col-2" >	                    
+	                <c:set value="${c.sale}" var="csale"/>	                	                
+	                    <div class="item-sell col-2" >
+	                    	<c:if test="${csale != 0 }">
+	                    		<div class="text-center" style="position:absolute;border-radius: 50px;background-color:tomato; width:30px;height: 35px;z-index: 1000;top:7px;left:22px;opacity: 80%">${c.sale}%</div>
+	                    	</c:if>	                    
 	                        <img src="/resources/img/product/${c.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
 	                        <a><br>${c.pName}<br></a><a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
 	                        <c:if test="${csale != 0 }">
@@ -42,6 +45,9 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
                     <c:forEach items="<%=date %>" var="d">
                     <c:set value="${d.sale}" var="dsale"/>	    
 	                    <div class="item-sell col-2">
+	                    	<c:if test="${dsale != 0 }">
+	                    		<div class="text-center" style="position:absolute;border-radius: 50px;background-color:tomato; width:30px;height: 35px;z-index: 1000;top:7px;left:22px;opacity: 80%">${d.sale}%</div>
+	                    	</c:if>
 	                        <img src="/resources/img/product/${d.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
 	                        <a><br>${d.pName}<br></a><a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
 	                        <c:if test="${dsale != 0 }">
@@ -63,7 +69,7 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
                     <c:set value="${s.sale}" var="ssale"/>
 	                    <div class="item-sell col-2">
 	                    	<c:if test="${ssale != 0 }">
-	                    		<div class="text-center" style="position:absolute;border-radius: 50px;background-color:tomato; width:30px;height: 35px;z-index: 1000;top: 5px;left:18px;opacity: 80%">${s.sale}%</div>
+	                    		<div class="text-center" style="position:absolute;border-radius: 50px;background-color:tomato; width:30px;height: 35px;z-index: 1000;top:7px;left:22px;opacity: 80%">${s.sale}%</div>
 	                    	</c:if>
 	                        <img src="/resources/img/product/${s.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
 	                        <a><br>${s.pName}<br></a><a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
