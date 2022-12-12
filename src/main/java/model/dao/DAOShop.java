@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+
+import controller.LoggableStatement;
 import database.DBConnection;
+import model.dto.DTOPage;
 import model.dto.DTOShop;
 
 public class DAOShop {
@@ -174,31 +178,47 @@ public class DAOShop {
 		
 	}
 	//상품리스트 불러오기
-	public ArrayList<DTOShop> productAdminlist(HttpServletRequest req) {
+	public ArrayList<DTOShop> productAdminlist(HttpServletRequest req,ArrayList<DTOPage> page) {
 		HttpSession session=req.getSession();
-		String id = (String)session.getAttribute("id");
+		String id = (String)session.getAttribute("nicname");
 		PreparedStatement pstmt =null;
 		Connection con = null;
 		String sql = null;
 		ResultSet rs = null;
+		String ob = getOrderby(req);
+		System.out.println("obResult:"+ob);
+		int limitStatr=0;
+		int limitEnd=0;
+		for(DTOPage p : page) {
+			limitEnd= p.getOffset();
+			limitStatr = p.getLimit();			
+		}
+		System.out.println("limitStart:"+limitStatr);
+		System.out.println("limitEnd:"+limitEnd);
+		
 		ArrayList<DTOShop> list = new ArrayList<DTOShop>();		
 		try {
 			con = DBConnection.getconn();
-			sql ="select * from product where id =?";
+			sql ="select * from product where id = ? order by ? limit ?,?";
 			pstmt=con.prepareStatement(sql);
 			pstmt.setString(1, id);
+			pstmt.setString(2, ob);
+			pstmt.setInt(3, limitStatr);
+			pstmt.setInt(4, limitEnd);			
 			rs=pstmt.executeQuery();
+			int i =0;
 			while(rs.next()) {
 				DTOShop d = new DTOShop();
 				d.setpId(rs.getString("pID"));
 				d.setpName(rs.getString("pName"));
 				d.setpPrice(rs.getInt("pPrice"));
 				d.setOrderCnt(rs.getInt("orderCnt"));
-				d.setSum(rs.getInt("orderCnt"), rs.getInt("pPrice"));
+				d.setSum(rs.getInt("orderCnt"), rs.getInt("pPrice"));			
+				//System.out.println("총액:"+d.getSum()); 
+				i++;
 				list.add(d);
-				System.out.println("총액:"+d.getSum()); 
 			}
-			
+			System.out.println("total:"+i);
 			System.out.println(id);
 			
 			System.out.println("상품리스트 불러오기");
@@ -217,7 +237,147 @@ public class DAOShop {
 		}
 		return null;	
 	}
+	//상품리스트 불러오기 admin shop main
+	public ArrayList<DTOShop> productAdminlist(HttpServletRequest req,ArrayList<DTOPage> page,String ob) {
+		HttpSession session=req.getSession();
+		String id = (String)session.getAttribute("nicname");
+		PreparedStatement pstmt =null;
+		Connection con = null;
+		String sql = null;
+		ResultSet rs = null;		
+		int limitStatr=0;
+		int limitEnd=0;
+		for(DTOPage p : page) {
+			limitEnd= p.getOffset();
+			limitStatr = p.getLimit();			
+		}
+		//System.out.println("limitStart:"+limitStatr);
+		//System.out.println("limitEnd:"+limitEnd);
+		System.out.println("orderby:"+ob);				
+		try {
+			ArrayList<DTOShop> list = new ArrayList<DTOShop>();
+			con = DBConnection.getconn();
+			sql ="select * from product where id = ? order by "+ob+" limit ?,?";
+			pstmt = new LoggableStatement(con,sql);
+			pstmt.setString(1, id);		
+			pstmt.setInt(2, limitStatr);
+			pstmt.setInt(3, limitEnd);			
+			rs=pstmt.executeQuery();
+			System.out.println("Executing query: "+((LoggableStatement)pstmt).getQueryString());
+			int i =0;
+			while(rs.next()) {
+				DTOShop d = new DTOShop();
+				d.setpId(rs.getString("pID"));
+				d.setpName(rs.getString("pName"));
+				d.setpPrice(rs.getInt("pPrice"));
+				d.setOrderCnt(rs.getInt("orderCnt"));
+				d.setpImg(rs.getString("pImg"));	
+				d.setSale(rs.getInt("sale"));
+				d.setpContent(rs.getString("pContent"));
+				if(d.getSale()!=0) {
+					d.setRePrice(d.getpPrice(), d.getSale());
+				}
+				i++;
+				list.add(d);
+				System.out.println(d.getpId());
+			}
+			System.out.println("total:"+i);
+			//System.out.println(id);
+			
+			System.out.println("상품리스트 불러오기");
+			System.out.println("----------------------------------");
+			return list;
+		}catch (Exception e) {
+			System.out.println("상품리스트 불러오기 오류");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+				if(rs!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		return null;	
+	}
+	//shopAdminProduct cnt
+	public Integer getshopAdminTotal(HttpServletRequest req) {
+		HttpSession session=req.getSession();
+		Connection con=null;
+        PreparedStatement pstmt=null;
+        String sql;
+        ResultSet rs =null;
+        try {
+        	con = DBConnection.getconn();
+        	sql="select count(*) from product where id=?";
+        	pstmt=con.prepareStatement(sql);
+        	pstmt.setString(1, (String)session.getAttribute("nicname"));
+        	rs=pstmt.executeQuery();
+        	while(rs.next()) {
+        		System.out.println("전체 글:"+rs.getInt(1));
+        		return rs.getInt(1);        		
+        	}       	
+        }catch (Exception e) {
+				System.out.println("porductList get error");
+				e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+				if(rs!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		return null;
+	}
+	//admin 상품삭제
+	public void deleteProducts(HttpServletRequest req) {
+		String[] checkbox = req.getParameterValues("check");
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		String sql = null;
+		try {
+			con=DBConnection.getconn();
+			sql="delete from product where pID=?";			
+			for(String c : checkbox) {
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, c);
+				pstmt.executeUpdate();
+
+
+				System.out.println("delete pID:"+c);
+			}			
+		}catch (Exception e) {
+			System.out.println("admin product delete error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();			
+			}catch (Exception e) {
+				
+			}			
+		}		
+	}
 	
+	public static String getOrderby(HttpServletRequest req) {
+		String ob = null;
+		try {
+			ob = req.getParameter("ob");			
+			if(ob==null) {
+				ob = "orderCnt";
+			}else {
+				ob = req.getParameter("ob");
+			}
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+				
+		return ob;
+	}
 	
 
 }

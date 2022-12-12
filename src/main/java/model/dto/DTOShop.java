@@ -17,9 +17,22 @@ public class DTOShop {
 	private Timestamp updateDate;
 	private String pImg;
 	private int sum;
+	private int rePrice;
 	
 	
 	
+	
+	
+	public int getRePrice() {
+		return rePrice;
+	}
+	public void setRePrice(int price,int sale) {
+		int asd=price/sale;		
+		this.rePrice = price-asd;
+	}
+	public void setSum(int sum) {
+		this.sum = sum;
+	}
 	public int getSum() {
 		return sum;
 	}

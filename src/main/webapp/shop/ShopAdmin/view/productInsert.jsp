@@ -17,8 +17,8 @@
                 <div class="col-7">
                 <form id="fmt" name="fmt" action="/insertProduct.pn" method="post">
                 <input type="hidden" id="file" name="file" alt="">
-                    <p><span style="">Pname&nbsp;&nbsp;</span><input name="Pname" placeholder="상품명을 입력하세요">
-                    <p>pcontent<br><textarea id="content" name="content" placeholder="상품설명을 입력하세요"></textarea>
+                    <p><span style="">상품명&nbsp;&nbsp;</span><input name="Pname" placeholder="상품명을 입력하세요">
+                    <p>상품설명:<br><textarea id="content" name="content" placeholder="상품설명을 입력하세요"></textarea>
                     <p>분류
                     
 						<select id="categoryU" name="category" class="selectBoxForm">
@@ -120,8 +120,7 @@ function fn_submit(){
            , success:function(response) {        	            
            }
            ,error: function (jqXHR) 
-           { 
-               alert(jqXHR.responseText); 
+           {                
            }
        });
         $('#fmt').submit();

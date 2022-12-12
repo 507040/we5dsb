@@ -152,10 +152,7 @@
 					</c:otherwise>				
 				</c:choose>
 			</c:if>
-			<%}else{
-				
-			}%>
-	
+			<%} %>
 			</div>
 		</div>     
 	</div>

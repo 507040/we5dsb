@@ -228,8 +228,7 @@ public class DAOBoard {
 		int i =0;
 		for(DTOPage p : page) {
 			limitStatr= p.getOffset();
-			limitEnd = p.getLimit();
-			
+			limitEnd = p.getLimit();		
 		}
 		try {			
 			conn=DBConnection.getconn();

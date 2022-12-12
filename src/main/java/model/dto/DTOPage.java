@@ -19,14 +19,15 @@ public class DTOPage {
 		this.PageNum = pageNum;
 		this.Amount = Amount;
 		this.total = total;		
-		System.out.println("전체 글 DTO : "+total);
+		//System.out.println("전체 글 DTO : "+total);
+		//System.out.println("현제페이지:"+pageNum);
 		
 		if(total%Amount !=0) {
 			num = 1;//게시글 반올림
 		}
 		
 		this.endPage = (int)(Math.ceil(total / Amount))+num;
-		System.out.println("전체 페이지 : "+endPage);		
+		//System.out.println("전체 페이지 : "+endPage);		
 		if(pageNum == 1) {
 			this.limit = pageNum-1;
 		}else {
@@ -59,12 +60,14 @@ public class DTOPage {
 		
 		if(pageNum>=10) {//페이지가 10보다 높을때 시작페이지 설정
 			this.startPage = numfin;			
+		}else {
+			this.startPage = 1;
 		}
 		
 		this.endpage = startPage+9;
 		if(endpage>endPage)this.endpage=endPage;
 		
-		System.out.println("startpage:"+startPage);
+		//System.out.println("startpage:"+startPage);
 		//System.out.println("endpage:"+endpage);
 		
 		this.offset = Amount;

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import model.dao.DAOShop;
+import model.dto.DTOPage;
 import model.dto.DTOShop;
 
 public class ShopController extends HttpServlet {
@@ -36,8 +37,10 @@ public class ShopController extends HttpServlet {
 		
 		resp.setContentType("text/html; charset=utf-8");
 		//서블릿 호출 명령
-		//블로그메인
-		if (command.equals("/SMain.pn")) {//shop메인
+		if (command.equals("/SMain.pn")) {//shop메인			
+			productAdminOrdercnt(req,6,"orderCnt desc");
+			productAdminRegdate(req,6,"regDate desc");
+			productAdminSale(req,6,"sale desc");
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/SMain.jsp");
 			rd.forward(req, resp);
 		}else if (command.equals("/cart.pn")) {//cart 메인
@@ -46,10 +49,10 @@ public class ShopController extends HttpServlet {
 		}else if (command.equals("/order.pn")) {//order 메인
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/order.jsp");
 			rd.forward(req, resp);
-		}else if (command.equals("/Product.pn")) {//상품등록 메인			
+		}else if (command.equals("/Product.pn")) {//상품등록			
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/productInsert.jsp");
 			rd.forward(req, resp);
-		}else if(command.equals("/insertProduct.pn")) {
+		}else if(command.equals("/insertProduct.pn")) {//상품업로드 process
 			System.out.println("상품 업로드");			
 			insertProduct(req,resp);
 			resp.sendRedirect("/productView.pn");
@@ -64,13 +67,16 @@ public class ShopController extends HttpServlet {
 			rd.forward(req, resp);			
 		}else if(command.equals("/ShopadminPage.pn")) {//상품관리자 메인
 			getchart(req);
+			productAdmin(req,10);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/shopadminmain.jsp");
 			rd.forward(req, resp);			
-		}else if(command.equals("/Productadmin.pn")) {
-			productAdmin(req);
+		}else if(command.equals("/Productadmin.pn")) {//shopAdmin 상품관리
+			productAdmin(req,20);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/productList.jsp");
-			rd.forward(req, resp);	
-			
+			rd.forward(req, resp);			
+		}else if(command.equals("/AdminProductDelete.pn")) {//adminShop 상품삭제			
+			deleteProducts(req);
+			resp.sendRedirect("/Productadmin.pn");			
 		}
 		
 	}
@@ -111,7 +117,7 @@ public class ShopController extends HttpServlet {
 			System.out.println("</script>");			
 			return;
 		}
-		
+	
 		
 		DAOShop dao = DAOShop.getInstence();
 		String category = req.getParameter("category");
@@ -129,7 +135,7 @@ public class ShopController extends HttpServlet {
 		System.out.println("changeImg:"+img);
 		
 		DTOShop s = new DTOShop();
-		s.setId((String)session.getAttribute("id"));
+		s.setId((String)session.getAttribute("nicname"));
 		s.setpId(pid);
 		s.setpName(pName);
 		s.setpContent(req.getParameter("content"));
@@ -154,16 +160,71 @@ public class ShopController extends HttpServlet {
 	public void getchart(HttpServletRequest req) {
 		DAOShop DAO = DAOShop.getInstence();
 		ArrayList<DTOShop> s = DAO.getchart(req);
-		for(DTOShop l : s) {
+		/*for(DTOShop l : s) {
 			System.out.println("상품:"+l.getpName()+"가격:"+l.getSum());
-		}
+		}*/
 		req.setAttribute("Chart", s);		
 	}
 	//상품관리 메인
-	public void productAdmin(HttpServletRequest req) {
+	public void productAdmin(HttpServletRequest req,int amount) {
 		DAOShop DAO = DAOShop.getInstence();
-		ArrayList<DTOShop> pl =DAO.productAdminlist(req);
+		ArrayList<DTOShop> pl =DAO.productAdminlist(req,Calp(req,getp(req),getshopAdminTotal(req),amount));
 		req.setAttribute("productlist", pl);
+	}
+	//shop메인 판매량 순(인기순)
+	public void productAdminOrdercnt(HttpServletRequest req,int amount,String ob) {
+		DAOShop DAO = DAOShop.getInstence();
+		ArrayList<DTOShop> plC =DAO.productAdminlist(req,Calp(req,getp(req),getshopAdminTotal(req),amount),ob);		
+		req.setAttribute("plOrdercnt", plC);
+	}
+	//shop메인 (신상품) 순
+	public void productAdminRegdate(HttpServletRequest req,int amount,String ob) {
+		DAOShop DAO = DAOShop.getInstence();
+		ArrayList<DTOShop> plD =DAO.productAdminlist(req,Calp(req,getp(req),getshopAdminTotal(req),amount),ob);
+		req.setAttribute("plregDate", plD);
+	}
+	//shop메인 (세일) 순
+	public void productAdminSale(HttpServletRequest req,int amount,String ob) {
+		DAOShop DAO = DAOShop.getInstence();
+		ArrayList<DTOShop> plS =DAO.productAdminlist(req,Calp(req,getp(req),getshopAdminTotal(req),amount),ob);
+		req.setAttribute("plSale", plS);
+	}
+	//페이지 parameter
+	public Integer getp(HttpServletRequest req) {
+		int p = 1;
+		try {
+			String reqP = req.getParameter("p");
+			//System.out.println("reqP:"+reqP);
+			if(reqP==null) {
+				p=1;
+			}else {
+				p=Integer.parseInt(reqP);
+			}
+			//System.out.println("Page_num:"+p);
+			return p;
+		}catch (Exception e) {
+			System.out.println("쿼리 P 오류");
+			e.printStackTrace();
+		}		
+		return null;
+	}
+	//shop관리자 상품리스트 전체 cnt
+	public Integer getshopAdminTotal(HttpServletRequest req) {
+		DAOShop dao = DAOShop.getInstence();				
+		return dao.getshopAdminTotal(req);		
+	}
+	//페이지 서비스
+	public ArrayList<DTOPage> Calp(HttpServletRequest req,int p,int total,int Amount) {
+		
+		ArrayList<DTOPage> page = new ArrayList<DTOPage>();
+		DTOPage dtop =new DTOPage(p,total,Amount);	
+		page.add(dtop);
+		req.setAttribute("page", page);				
+		return page;		
+	}
+	public void deleteProducts(HttpServletRequest req) {
+		DAOShop dao = DAOShop.getInstence();
+		dao.deleteProducts(req);
 	}
 }
 

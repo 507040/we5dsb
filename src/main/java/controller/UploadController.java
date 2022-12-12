@@ -86,7 +86,8 @@ public class UploadController extends HttpServlet{
 		
 		//String realFolderPath = "C:\\Users\\KTE-038\\git\\project\\src\\main\\webapp\\resources\\" + dirDate + "\\" + dirDate2 + "";
 		//String realFolderPath = "D:\\jspStudy2\\project123\\src\\main\\webapp\\resources\\img\\" +dirDate+"\\"+dirDate2+"";//업로드 위치
-		String realFolderPath = "C:\\Users\\wjddb\\git\\we5dsb\\src\\main\\webapp\\resources\\img\\product";//업로드 위치
+		String realFolderPath ="C:\\Users\\KTE-038/git\\we5dsb\\src\\main\\webapp\\resources\\img\\product";//업로드 위치
+		//String realFolderPath = "C:\\Users\\wjddb\\git\\we5dsb\\src\\main\\webapp\\resources\\img\\product";//업로드 위치 notebook
 		//String realFolderPath = "C:\\upload\\"+dirDate+"\\"+dirDate2+"";//업로드 위치		
 		File Folder = new File(realFolderPath);		
 		// 해당 디렉토리가 없을경우 디렉토리를 생성합니다.

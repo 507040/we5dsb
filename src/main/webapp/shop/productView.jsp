@@ -19,14 +19,14 @@ if(v==null){%>
     <div class="col-2" style="" id="lside">
     </div>
     
-    <div class="col-8" style="margin-top: 150px" id="main">
+    <div class="col-8" style="margin-top: 100px" id="main">
         <div class="col-12 mb-3 p-2" style="display: flex;flex-wrap: nowrap;height: auto;border: 1px solid gray;border-radius: 10px;">
             <div class="container">
             <div class="row">
            	<c:forEach items="<%=v %>" var="v">
            	<c:set value="${v.pId}" var="pid"/>           	
                 <div class="col-md-5 m-0 p-0" >
-                    <img class="img col-12" src="/resources/img/product/${v.pImg}" style="heihgt:500px;object-fit:cover">
+                    <img class="img col-12" src="/resources/img/product/${v.pImg}" style="object-fit:cover">
                 </div>		
                 <div class="col-md-7">
                 
