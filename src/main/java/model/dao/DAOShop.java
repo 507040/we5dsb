@@ -3,7 +3,9 @@ package model.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,6 +16,7 @@ import controller.LoggableStatement;
 import database.DBConnection;
 import model.dto.DTOPage;
 import model.dto.DTOShop;
+import model.dto.DTOShopPage;
 
 public class DAOShop {
 	
@@ -199,12 +202,11 @@ public class DAOShop {
 		ArrayList<DTOShop> list = new ArrayList<DTOShop>();		
 		try {
 			con = DBConnection.getconn();
-			sql ="select * from product where id = ? order by ? limit ?,?";
-			pstmt=con.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.setString(2, ob);
-			pstmt.setInt(3, limitStatr);
-			pstmt.setInt(4, limitEnd);			
+			sql ="select * from product where id = ? order by "+ob+" limit ?,?";
+			pstmt = new LoggableStatement(con,sql);
+			pstmt.setString(1, id);			
+			pstmt.setInt(2, limitStatr);
+			pstmt.setInt(3, limitEnd);			
 			rs=pstmt.executeQuery();
 			int i =0;
 			while(rs.next()) {
@@ -218,6 +220,7 @@ public class DAOShop {
 				i++;
 				list.add(d);
 			}
+			System.out.println("Executing query: "+((LoggableStatement)pstmt).getQueryString());
 			System.out.println("total:"+i);
 			System.out.println(id);
 			
@@ -257,11 +260,10 @@ public class DAOShop {
 		try {
 			ArrayList<DTOShop> list = new ArrayList<DTOShop>();
 			con = DBConnection.getconn();
-			sql ="select * from product where id = ? order by "+ob+" limit ?,?";
-			pstmt = new LoggableStatement(con,sql);
-			pstmt.setString(1, id);		
-			pstmt.setInt(2, limitStatr);
-			pstmt.setInt(3, limitEnd);			
+			sql ="select * from product order by "+ob+" limit ?,?";
+			pstmt = new LoggableStatement(con,sql);				
+			pstmt.setInt(1, limitStatr);
+			pstmt.setInt(2, limitEnd);			
 			rs=pstmt.executeQuery();
 			System.out.println("Executing query: "+((LoggableStatement)pstmt).getQueryString());
 			int i =0;
@@ -270,6 +272,7 @@ public class DAOShop {
 				d.setpId(rs.getString("pID"));
 				d.setpName(rs.getString("pName"));
 				d.setpPrice(rs.getInt("pPrice"));
+				d.setId(rs.getString("id"));
 				d.setOrderCnt(rs.getInt("orderCnt"));
 				d.setpImg(rs.getString("pImg"));	
 				d.setSale(rs.getInt("sale"));
@@ -361,13 +364,78 @@ public class DAOShop {
 			}			
 		}		
 	}
+	//ShopPageList get
+	public ArrayList<DTOShopPage> shopPageList(HttpServletRequest req) {
+		Connection con = null;
+		PreparedStatement pstmt = null;		
+		String sql = null;
+		ResultSet rs = null;
+		ArrayList<DTOShopPage> list= new ArrayList<DTOShopPage>();
+		SimpleDateFormat asddasd = new SimpleDateFormat("yyMMdd");		
+		String owner = req.getParameter("owner");		
+		try {
+		con=DBConnection.getconn();
+		sql="select s.id as id"
+				+ ", s.centent as centent"
+				+ ", s.visiter as vister"
+				+ ", s.regDate as regDate"
+				+ ", s.img as img" 
+				+ ", s.Favorites as favorites"
+				+ ", p.pID as pid"
+				+ ", p.pName as pname"
+				+ ", p.pPrice as price"
+				+ ", p.pImg as pimg"
+				+ ", p.pContent as pcontent"
+				+ ", p.sale as sale"
+				+ ", p.pInStrok as instork"
+				+ ", p.category as category"
+				+ ", p.orderCnt as ordercnt "
+				+ " from shop as s, product as p"
+				+ " where s.id = ?";		
+		pstmt=con.prepareStatement(sql);
+		pstmt.setString(1, owner);
+		rs = pstmt.executeQuery();
+		while(rs.next()) {
+			DTOShopPage d = new DTOShopPage();
+			String regd = asddasd.format(rs.getTimestamp("regDate")); 
+			d.setId(rs.getString("id"));
+			d.setCentent(rs.getString("centent"));
+			d.setVister(rs.getInt("vister"));
+			d.setRegDate(regd);
+			d.setImg(rs.getString("img"));
+			d.setFavorites(rs.getInt("favorites"));
+			d.setPid(rs.getString("pid"));
+			d.setPname(rs.getString("pname"));
+			d.setPrice(rs.getInt("price"));
+			d.setPimg(rs.getString("pimg"));
+			d.setPcontent(rs.getString("pcontent"));
+			d.setSale(rs.getInt("sale"));
+			d.setInstork(rs.getInt("instork"));
+			d.setCatergory(rs.getString("category"));
+			d.setOrdercnt(rs.getInt("orderCnt"));
+			list.add(d);
+		}
+		}catch (Exception e) {
+			System.out.println("shopPage Get List error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+				if(rs!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		return list;	
+	}
 	
 	public static String getOrderby(HttpServletRequest req) {
 		String ob = null;
 		try {
 			ob = req.getParameter("ob");			
 			if(ob==null) {
-				ob = "orderCnt";
+				ob = "orderCnt desc";
 			}else {
 				ob = req.getParameter("ob");
 			}

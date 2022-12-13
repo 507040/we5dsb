@@ -1,9 +1,16 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="com.mysql.cj.protocol.Resultset"%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="/include/urimaker.jsp" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ include file="/include/dbconn.jsp" %>
 
 <!doctype html>
 <html lang="UTF-8">
@@ -80,32 +87,27 @@
                         <button class="tomato" type="submit"><i class="bi bi-search"></i></button>
                     </form>
                 </div>
-
                 <div class="col-3 row m-0 p-0" style="justify-content: flex-end;align-items: center;">
-                    <!--인기검색어 롤링-->
-                    <div class="block">
-                        <ul id="ticker">
-                            <li><a href="#">1.aa</a></li>
-                            <li><a href="#">2.bb</a></li>
-                            <li><a href="#">3.cc</a></li>
-                            <li><a href="#">4.dd</a></li>
-                            <li><a href="#">5.ee</a></li>
-                        </ul>
-                    </div>
-                    <!--인기검색어 dropdown-->
-                    <div class="box m-0" style="position: relative;">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false"> </a>
-                        <div class="box">
-                            <ul class="dropdown dropdown-menu dropdown-menu-right">
-                                <li id="drItem1"><a id="drItem2" class="dropdown-item link m-0 p-1">1.aa</a></li>
-                                <li id="drItem1"><a id="drItem2" class="dropdown-item link m-0 p-1">2.aa</a></li>
-                                <li id="drItem1"><a id="drItem2" class="dropdown-item link m-0 p-1">3.aa</a></li>
-                                <li id="drItem1"><a id="drItem2" class="dropdown-item link m-0 p-1">4.aa</a></li>
-                                <li id="drItem1"><a id="drItem2" class="dropdown-item link m-0 p-1">5.aa</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+	                    <!--인기검색어 롤링-->
+	                    <div class="block">
+	                        <ul id="ticker">
+			                <%					
+								String sql = "select text,count(*) as cnt from search group by text order by cnt desc limit 0,9";
+								PreparedStatement pstmt = conn.prepareStatement(sql);
+								ResultSet rs = pstmt.executeQuery();
+								int i=1;
+								while(rs.next()){%>					
+		                            <li><a href="/Bloglist.do?search=<%=rs.getString("text")%>"><%=i%>. <%=rs.getString("text") %></a></li>
+				                            	                                            	
+								<%i++;
+								}		
+								rs.close();
+								pstmt.close();
+								conn.close();	
+							%>                
+							</ul>
+                  	  </div>						
+           		</div>	
             </div>
             <!--카테고리-->
 

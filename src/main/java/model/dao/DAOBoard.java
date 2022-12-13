@@ -25,6 +25,62 @@ public class DAOBoard {
 		}
 		return instence;
 	}
+	public ArrayList<DTOBoard> AllcategoryBoardList(HttpServletRequest req, String ob, String Search,ArrayList<DTOPage> page){
+		PreparedStatement pstmt=null;
+		Connection con=null;
+		ResultSet rs=null;
+		String sql=null;
+		int limitStatr=0;
+		int limitEnd=0;		
+		for(DTOPage p : page) {
+			limitStatr= p.getLimit();
+			limitEnd = p.getOffset();			
+		}
+		
+		ArrayList<DTOBoard> list = new ArrayList<DTOBoard>();
+		try {
+			con=DBConnection.getconn();
+			if(Search.equals("nosearch")) {//검색어 없음
+				sql="select * from board where category = ? order by "+ob+" limit ?,?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, req.getParameter("c"));
+				pstmt.setInt(2, limitStatr);
+				pstmt.setInt(3, limitEnd);
+				rs = pstmt.executeQuery();
+			}else {//검색어 있음
+				sql="select * from board where category = ? and (subject like ? or comment like ?) order by "+ob+" limit ?,?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, req.getParameter("c"));
+				pstmt.setString(2, "%"+Search+"%");
+				pstmt.setString(3, "%"+Search+"%");
+				pstmt.setInt(4, limitStatr);
+				pstmt.setInt(5, limitEnd);
+				rs = pstmt.executeQuery();
+			}	
+			while(rs.next()) {
+				DTOBoard dto = new DTOBoard();
+				dto.setBno(rs.getInt("bno"));
+				dto.setId(rs.getString("id"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setComment(rs.getString("comment"));
+				dto.setCategory(rs.getString("category"));
+				dto.setRegDate(rs.getString("regDate"));
+				dto.setRef(rs.getInt("ref"));
+				dto.setUp(rs.getInt("up"));
+				dto.setDown(rs.getInt("down"));
+				dto.setGNS(rs.getString("GNS"));
+				dto.setFid(rs.getString("fid"));
+				dto.setThread(rs.getString("thread"));				
+				list.add(dto);				
+			}
+			return list;
+		}catch (Exception e) {
+			System.out.println("Catery Board List Get Error");
+			e.printStackTrace();
+		}		
+		return null;
+	}
+	
 	//
 	public ArrayList<DTOBoard> boardList(HttpServletRequest req,String category,String search) {
 		PreparedStatement pstmt=null;
@@ -628,10 +684,9 @@ public class DAOBoard {
 		
 	}
 	//검색어 전체 게시물 수
-		public Integer getCountSearch(String category,String search) {
-		
+		public Integer getCount(String category,String search) {		
 		PreparedStatement pstmt=null;
-		System.out.println("categoty:"+category);
+		System.out.println("category:"+category);
 		String sql = null;
 		Connection conn = null;
 		ResultSet rs = null;

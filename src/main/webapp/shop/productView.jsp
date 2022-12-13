@@ -34,7 +34,7 @@ if(v==null){%>
                     <h3><c:out value="${v.pName }"/></h3>
                     <p><c:out value="${v.pContent }"/>                    
                     <p><b>가격</b>:<span style="font-weight: bold"><fmt:formatNumber value="${v.pPrice}" pattern="#,###"/></span>
-                    <p><b>판매자:</b><c:out value="${v.id}"/>
+                    <p><b>판매자:</b><a href="/ShopPage.pn?owner=${v.id}"><c:out value="${v.id}"/></a>
                     <p><b>분류:</b>
 	                    <c:if test='${category==1}'>자유</c:if>
 	                    <c:if test='${category==2}'>카테고리A</c:if>

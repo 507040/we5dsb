@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.dao.DAOBlogList;
 import model.dao.DAOBoard;
+import model.dao.TextSearchDB;
 import model.dto.DTOBlogList;
 import model.dto.DTOBoard;
 import model.dto.DTOPage;
@@ -78,12 +79,17 @@ public class BlogController extends HttpServlet{
 			String thread =req.getParameter("Thread");			
 			BoardWrite(req,resp,thread);			
 		}else if(command.equals("/Bloglist.do")) {//카테고리 3개 인기글 6개
+			if(req.getParameter("search")!=null||!req.getParameter("search").equals("")||!req.getParameter("search").trim().equals("")) {
+				TextSearchDB t = new TextSearchDB();
+				t.TextSearchdb(req);
+			}
 			req.setAttribute("listA", boardListget(req,"1"));
 			req.setAttribute("listB", boardListget(req,"2"));
 			req.setAttribute("listC", boardListget(req,"3"));
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/list.jsp");
 			rd.forward(req, resp); 		
 		}else if(command.equals("/BloglistCategory.do")) {//카테고리 별 전체 글
+			categoryBoardList(req,10);
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/listCategory.jsp");
 			rd.forward(req, resp);			
 		}else if(command.equals("/BoardUpdate.do")) {
@@ -94,6 +100,42 @@ public class BlogController extends HttpServlet{
 	public ArrayList<DTOBoard> boardListget(HttpServletRequest req,String category) {
 		DAOBoard dao = DAOBoard.getInstence();		
 		return dao.boardList(req,category,getSearch(req));
+	}
+	//검색어 있을 때 게시글 수
+	public Integer getCount(HttpServletRequest req,String search) {
+		DAOBoard dao = DAOBoard.getInstence();
+		int cnt = dao.getCount(req.getParameter("c"),getSearch(req));
+		return cnt;
+	}
+	//검색어 없을 때 게시글 수
+	public Integer getCount(HttpServletRequest req) {
+		DAOBoard dao = DAOBoard.getInstence();
+		int cnt = 0; 
+		try {
+			cnt = dao.getCount(req.getParameter("c"));
+			return cnt;
+		}catch (Exception e) {
+			System.out.println("count error");
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+	//parameter search
+	public static String getOrderBy(HttpServletRequest req) {
+		String ob=null;
+		try {
+			ob=req.getParameter("ob");
+			if(ob==null) {
+				ob = "ref desc";				
+			}else {
+				ob=req.getParameter("ob");	
+			}
+		}catch (Exception e) {
+			System.out.println("Get ob Parameter Error");
+			e.printStackTrace();
+		}
+		return ob;		
 	}
 	//parameter search
 	public static String getSearch(HttpServletRequest req) {
@@ -131,6 +173,26 @@ public class BlogController extends HttpServlet{
 		return p;
 	}
 	
+	public void categoryBoardList(HttpServletRequest req,int Amount) {
+		DAOBoard dao = DAOBoard.getInstence();
+		ArrayList<DTOBoard> list = new ArrayList<DTOBoard>();
+		if(getSearch(req).equals("nosearch")) {
+			
+			 list = dao.AllcategoryBoardList(req,getOrderBy(req),getSearch(req),Calp(req,getp(req),getCount(req),Amount));	
+		}else {
+			 list = dao.AllcategoryBoardList(req,getOrderBy(req),getSearch(req),Calp(req,getp(req),getCount(req,getSearch(req)),Amount));
+		}
+		String category = req.getParameter("c");
+		if(category.equals("1")) {
+			req.setAttribute("blistA", list);
+		}else if (category.equals("2")) {
+			req.setAttribute("blistB", list);
+		}
+		else if (category.equals("3")) {
+			req.setAttribute("blistC", list);
+		}
+	}
+	
 	public void updateBoard(HttpServletRequest req,HttpServletResponse resp) {
 		DAOBoard d= DAOBoard.getInstence();		
 		DTOBoard dto = new DTOBoard();
@@ -157,13 +219,12 @@ public class BlogController extends HttpServlet{
 		
 	}
 	//DTOpage process
-		public static ArrayList<DTOPage> Calp(HttpServletRequest req,int p,int total,int Amount) {
-			
+		public static ArrayList<DTOPage> Calp(HttpServletRequest req,int p,int total,int Amount) {			
 			ArrayList<DTOPage> page = new ArrayList<DTOPage>();
 			DTOPage dtop =new DTOPage(p,total,Amount);	
+			System.out.println(p+"/"+total+"/"+Amount);
 			page.add(dtop);
-			req.setAttribute("page", page);		
-			
+			req.setAttribute("page", page);	
 			return page;		
 		}
 	//

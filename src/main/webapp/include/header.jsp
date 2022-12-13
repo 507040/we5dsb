@@ -13,11 +13,10 @@
 	<nav class="navbar p-0 m-0 bg-white bg-opacity-10 text-center">
 		<div class="container text-center" style="justify-content: flex-start;">
 			<a href="/BMain.do" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">블로그</a>			
-			<a href="/BloglistCategory.do?category=1&search=&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
-			<a href="/BloglistCategory.do?category=2&search=&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
-			<a href="/BloglistCategory.do?category=3&search=&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>			
-			<a href="/SMain.pn" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">쇼핑</a>
-			<a href="/" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">고객센터</a>			
+			<a href="/BloglistCategory.do?c=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
+			<a href="/BloglistCategory.do?c=2" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
+			<a href="/BloglistCategory.do?c=3" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>			
+			<a href="/SMain.pn" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">쇼핑</a>			
 		</div>
 	</nav>	
 </div>

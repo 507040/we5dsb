@@ -15,26 +15,25 @@ public class DTOPage {
 	public DTOPage() {};
 	
 	public DTOPage(int pageNum,int total, int Amount) {
+		
 		int num=0;
 		this.PageNum = pageNum;
 		this.Amount = Amount;
-		this.total = total;		
-		//System.out.println("전체 글 DTO : "+total);
-		//System.out.println("현제페이지:"+pageNum);
+		this.total = total;
+		
 		
 		if(total%Amount !=0) {
 			num = 1;//게시글 반올림
 		}
 		
 		this.endPage = (int)(Math.ceil(total / Amount))+num;
-		//System.out.println("전체 페이지 : "+endPage);		
+				
 		if(pageNum == 1) {
 			this.limit = pageNum-1;
 		}else {
 			this.limit = (pageNum-1)*Amount;	
 		}
-		int length = (int)(Math.log10(pageNum)+1);
-		//System.out.println("시작 글 DTO : "+limit);
+		int length = (int)(Math.log10(pageNum)+1);		
 		
 		//하한페이징 번호
 		int num1 = 0;
@@ -65,19 +64,25 @@ public class DTOPage {
 		}
 		
 		this.endpage = startPage+9;
-		if(endpage>endPage)this.endpage=endPage;
+		if(endpage>endPage)this.endpage=endPage;		
 		
-		//System.out.println("startpage:"+startPage);
-		//System.out.println("endpage:"+endpage);
-		
-		this.offset = Amount;
-		//System.out.println("페이지 마지막 글 DTO : "+offset);
+		this.offset = Amount;		
 	
 		this.prev = this.PageNum <= 1;//1page = true;	
 		
-		this.next = pageNum >= this.endPage;//page가 마지막 페이지보다 크거나 같으면 false;		
-		//System.out.println("next:"+next);
-		//System.out.println("prev:"+prev);
+		this.next = pageNum >= this.endPage;//page가 마지막 페이지보다 크거나 같으면 false;
+		/*System.out.println("---------------------------------DTOpage-----------------------------------------------");
+		System.out.println("전체 글 DTO : "+total);
+		System.out.println("현제페이지:"+pageNum);
+		System.out.println("전체 페이지 : "+endPage);
+		System.out.println("시작 글 DTO : "+limit);		
+		System.out.println("startpage:"+startPage);
+		System.out.println("endpage:"+endpage);
+		System.out.println("페이지 마지막 글 DTO : "+offset);
+		System.out.println("next:"+next);
+		System.out.println("prev:"+prev);
+		System.out.println("---------------------------------DTOpage-----------------------------------------------");
+		*/
 	}
 	
 	
@@ -184,3 +189,4 @@ public class DTOPage {
 	
 
 }
+

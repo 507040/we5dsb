@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.JsonObject;
+
+import model.dao.CookieManager;
 import model.dao.DAOShop;
 import model.dto.DTOPage;
 import model.dto.DTOShop;
@@ -56,7 +60,26 @@ public class ShopController extends HttpServlet {
 			System.out.println("상품 업로드");			
 			insertProduct(req,resp);
 			resp.sendRedirect("/productView.pn");
-		}else if(command.equals("/productView.pn")) {//특정상품 보기
+		}else if(command.equals("/productView.pn")) {//특정상품 보기		
+			CookieManager co = new CookieManager();
+			HttpSession session = req.getSession();
+			ArrayList<String> cookie = new ArrayList<String>();
+			int i = 0;
+			while(true) {
+				if(co.getCookieName(req, "pid"+i)!=null){//등록쿠키 확인)					
+					co.getCookieValue(req, "pid"+i);
+					i++;
+				}else {
+					co.setCookie(req, resp, "pid"+i, Querypid(req));//쿠키등록
+					System.out.println("-------------------쿠키등록---------------------");
+					co.getCookieName(req, "pid"+i);
+					co.getCookieValue(req, "pid"+i);
+					cookie.add(co.getCookieValue(req, "pid"+i));//등록쿠키 확인
+					break;
+				}				
+			}
+			//co.deleteAllCookies(req, resp);
+			req.setAttribute("cookie", cookie);
 			System.out.println("상품보기");		
 			productView(req,Querypid(req));			
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/productView.jsp");
@@ -71,12 +94,16 @@ public class ShopController extends HttpServlet {
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/shopadminmain2.jsp");
 			rd.forward(req, resp);			
 		}else if(command.equals("/Productadmin.pn")) {//shopAdmin 상품관리
-			productAdmin(req,20);
+			productAdmin(req,2);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/productList.jsp");
 			rd.forward(req, resp);			
 		}else if(command.equals("/AdminProductDelete.pn")) {//adminShop 상품삭제			
 			deleteProducts(req);
 			resp.sendRedirect("/Productadmin.pn");			
+		}else if(command.equals("/ShopPage.pn")) {//shopPage main		
+			shopPageLisgt(req);
+			RequestDispatcher rd = req.getRequestDispatcher("/shop/shopPage.jsp");
+			rd.forward(req, resp);	
 		}
 		
 	}
@@ -226,5 +253,14 @@ public class ShopController extends HttpServlet {
 		DAOShop dao = DAOShop.getInstence();
 		dao.deleteProducts(req);
 	}
+	//ShopPage
+	public void shopPageLisgt(HttpServletRequest req) {
+		DAOShop dao = DAOShop.getInstence();
+System.out.println(req.getParameter("owner"));
+		req.setAttribute("SList", dao.shopPageList(req)); 
+		
+	}
+	
+	
 }
 

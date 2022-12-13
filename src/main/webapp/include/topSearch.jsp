@@ -4,6 +4,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <% String str= request.getRequestURI();%>
+<%String c = request.getParameter("search");
+if(c==null){
+	c="";
+}
+%>
 
 <!DOCTYPE html>
 <html>
@@ -37,7 +42,7 @@
                             
                                 <form action=<c:out value="/Bloglist.do"/> class="form-inline my-2 my-lg-0" method="get">
                                 	<input type="hidden" name="category" value="<%=request.getParameter("category")%>">                                	
-                                    <input class="form-control mr-2" id="searchInput" name="search" style="width: 80%" type="search" value="<%=request.getParameter("search") %>" placeholder="검색어를 입력하세요" aria-label="Search">
+                                    <input class="form-control mr-2" id="searchInput" name="search" style="width: 80%" type="search" value="<%=c %>" placeholder="검색어를 입력하세요" aria-label="Search">
                                     <input type="hidden" name="p" value="1">
                                     <button class="tomato" type="submit"><i class="bi bi-search"></i></button>
                                 </form>
@@ -64,14 +69,25 @@
 			    
 			   	
 		<div class="col-12">
-		<div class="container text-center" style="justify-content: flex-start;">
-			<a href="/BMain.do" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">블로그</a>			
-			<a href="/BloglistCategory.do?category=1&search=<%=request.getParameter("search")%>&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
-			<a href="/BloglistCategory.do?category=2&search=<%=request.getParameter("search")%>&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>
-			<a href="/BloglistCategory.do?category=3&search=<%=request.getParameter("search")%>&p=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">소개</a>			
-			<a href="/SMain.pn" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">쇼핑</a>
-			<a href="/" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">고객센터</a>			
-		</div>
+			<div class="container text-center" style="justify-content: flex-start;">
+				<a href="/BMain.do" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">블로그</a>
+				<%if(c.equals("")||c.trim().equals("")){ %>
+					<a href="/BloglistCategory.do?c=1" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리자유</a>
+				<%}else{%>
+					<a href="/BloglistCategory.do?c=1&search=<%=request.getParameter("search") %>" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리자유</a>
+				<%} %>
+				<%if(c.equals("")||c.trim().equals("")){ %>
+					<a href="/BloglistCategory.do?c=2" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리A</a>
+				<%}else{%>
+					<a href="/BloglistCategory.do?c=2&search=<%=request.getParameter("search") %>" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리</a>
+				<%} %>
+				<%if(c.equals("")||c.trim().equals("")){ %>
+					<a href="/BloglistCategory.do?c=3" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리B</a>
+				<%}else{%>
+					<a href="/BloglistCategory.do?c=3&search=<%=request.getParameter("search") %>" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">카테고리</a>
+				<%} %>						
+				<a href="/SMain.pn" class="menuitem p-1 m-1 font-weight-bolder text-decoration-none text-dark font-monospace">쇼핑</a>				
+			</div>
 		</div>
 	</nav>	
 		

@@ -7,7 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String category = request.getParameter("category");
+	String category = request.getParameter("c");
 	ArrayList boardlist = null;
 	if(category.equals("1")){
 		boardlist = (ArrayList)request.getAttribute("blistA");//블로그 리스트 가져오기
@@ -117,42 +117,69 @@
 			</div>
 			
 			<div class="col-12">
-			
+			<table>
 			<%
 			if(pagelist!=null){
-				DTOPage p = (DTOPage)pagelist.get(0);
-				int pageNum = Integer.parseInt(request.getParameter("p"));
-			%>
-			
-			<c:set value="<%=p.getStartPage() %>" var="startPage"/>			
-			<c:set value="<%=p.getEndpage()%>" var="endPage"/>
-			<c:set value="<%=p.isPrev() %>" var="prev"/>
-			<c:set value="<%=p.isNext() %>" var="next"/>
-			<c:set value="<%=p.getTotal() %>" var = "total"/>			
-			<c:set value="<%=pageNum-1 %>" var="prevPage"/>
-			<c:set value="<%=pageNum+1 %>" var="nextPage"/>
-			<c:if test="${endPage != 1}">				
-				<c:choose>
-					<c:when test="${prev==true}">
-						&lt;
-					</c:when>
-					<c:otherwise>
-						<a href="/BloglistCategory.do?category=<%=request.getParameter("category") %>&search=<%=request.getParameter("search") %>&p=${prevPage}">&lt;</a>						
-					</c:otherwise>				
-				</c:choose>				
-				<c:forEach var="page" begin="${startPage}" step="1" end="${endPage}">
-					<a href="/BloglistCategory.do?category=<%=request.getParameter("category") %>&search=<%=request.getParameter("search") %>&p=${page}" class="col-2" id="paging" data-page="${page}"><c:out value="${page }"/></a>
-				</c:forEach>
-				<c:choose>
-					<c:when test="${next==true}">
-						&gt;
-					</c:when>
-					<c:otherwise>
-						<a href="/BloglistCategory.do?category=<%=request.getParameter("category") %>&search=<%=request.getParameter("search") %>&p=${nextPage}">&gt;</a>						
-					</c:otherwise>				
-				</c:choose>
-			</c:if>
-			<%} %>
+				DTOPage pg = (DTOPage)pagelist.get(0);
+				int pageNum = 0;
+				try{
+					String asd = request.getParameter("p");
+					if(asd!=null){
+						pageNum = Integer.parseInt(asd);
+					}else{
+						pageNum=1;
+					}					
+				}catch(Exception e){
+					e.printStackTrace();					
+				}			
+			%>			
+				<tr>
+					<td class="text-right px-2" style="vertical-align: middle;align-items: center;">					
+						<c:set value="<%=pg.getStartPage() %>" var="startPage"/>			
+						<c:set value="<%=pg.getEndpage()%>" var="endPage"/>
+						<c:set value="<%=pg.isPrev() %>" var="prev"/>
+						<c:set value="<%=pg.isNext() %>" var="next"/>
+						<c:set value="<%=pg.getTotal() %>" var = "total"/>			
+						<c:set value="<%=pageNum-1 %>" var="prevPage"/>
+						<c:set value="<%=pageNum+1 %>" var="nextPage"/>
+						<c:set value="<%=pageNum %>" var="pagenum"/>
+						<c:if test="${endPage != 1}">				
+							<c:choose>
+								<c:when test="${prev==true}">
+									<span class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:black;cursor: default;" ><i class="bi bi-chevron-left"></i></span>
+								</c:when>
+								<c:otherwise>
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${prevPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-left"></i></a>						
+								</c:otherwise>				
+							</c:choose>				
+							<c:forEach var="page" begin="${startPage}" step="1" end="${endPage}">
+								<c:if test='${page != pagenum}'>								
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:black;"><c:out value="${page}"/></a>
+								</c:if>
+								<c:if test='${page == pagenum}'>								
+									<a href="/BloglistCategory.do.pn?c=<%=request.getParameter("c") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:#007bff;"><c:out value="${page}"/></a>
+								</c:if>
+							</c:forEach>
+							<c:choose>
+								<c:when test="${next==true}">
+									<span class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:black;cursor: default;" ><i class="bi bi-chevron-right"></i></span>
+								</c:when>
+								<c:otherwise>
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${nextPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-right"></i></a>						
+								</c:otherwise>				
+							</c:choose>
+						</c:if>
+						<c:forEach var="page" begin="${startPage}" step="1" end="${endPage}">
+							<c:if test="${endPage == 1}">
+								<a id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:#007bff;cursor: default;"><c:out value="${page}"/></a>
+							</c:if>
+						</c:forEach>
+					</td>
+		  	  	</tr>  
+	  	  	<%}else{%>
+	  	  		<tr><td>asd</td></tr>
+	  	  	<%} %>
+	  	  	</table>
 			</div>
 		</div>     
 	</div>

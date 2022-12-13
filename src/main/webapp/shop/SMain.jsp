@@ -25,8 +25,8 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 	                    	<c:if test="${csale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${c.sale}%</div>
 	                    	</c:if>	                    
-	                        <img src="/resources/img/product/${c.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                        <a><br>${c.pName}<br></a><a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
+	                        <a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank"><img src="/resources/img/product/${c.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+	                        <br>${c.pName}<br></a><a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
 	                        <c:if test="${csale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${c.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${c.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -48,8 +48,8 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 	                    	<c:if test="${dsale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${d.sale}%</div>
 	                    	</c:if>
-	                        <img src="/resources/img/product/${d.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                        <a><br>${d.pName}<br></a><a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
+	                        <a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank"><img src="/resources/img/product/${d.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+	                       <br>${d.pName}<br></a><a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
 	                        <c:if test="${dsale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${d.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${d.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -71,8 +71,8 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 	                    	<c:if test="${ssale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${s.sale}%</div>
 	                    	</c:if>
-	                        <img src="/resources/img/product/${s.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                        <a><br>${s.pName}<br></a><a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
+	                        <a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank"><img src="/resources/img/product/${s.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+	                        <br>${s.pName}<br></a><a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
 	                        <c:if test="${ssale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${s.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${s.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -86,8 +86,7 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
             </div>
 
 
-        </div>
-
+        </div>		
 
         <div class="col-2 m-0 p-0 pr-4" id="rside">
             <div class="rside col-12 p-0 m-0" style="display: flex;flex-wrap: wrap">
