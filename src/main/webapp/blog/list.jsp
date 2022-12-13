@@ -3,10 +3,11 @@
     pageEncoding="UTF-8"%>
 <%@page import="model.dto.DTOBoard"%>
 <%
-ArrayList blA = (ArrayList)request.getAttribute("blistA");
-ArrayList blB = (ArrayList)request.getAttribute("blistB");
-ArrayList blC = (ArrayList)request.getAttribute("blistC");%>
- 
+ArrayList blA = (ArrayList)request.getAttribute("listA");
+ArrayList blB = (ArrayList)request.getAttribute("listB");
+ArrayList blC = (ArrayList)request.getAttribute("listC");
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +19,6 @@ ArrayList blC = (ArrayList)request.getAttribute("blistC");%>
 	<div class="container">  
 		<div class="board">
 			<div class="category">
-			   
 			<div class="fir" style="border-bottom: 1px solid #ddd">
 				
 				<% 
@@ -44,9 +44,11 @@ ArrayList blC = (ArrayList)request.getAttribute("blistC");%>
 						</div>					
 					</div> 
 					<%}
-				}else{%>
+					}
+					if(blA.size()==0){%>
 					<p class="text-center">게시물이 없습니다...
-				<%} %>
+					<%} %>
+				
 				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=1&search=&p=1">더 보기 + </a>
 			</div>               
 			     
@@ -77,7 +79,8 @@ ArrayList blC = (ArrayList)request.getAttribute("blistC");%>
 					</div> 
 					<%}
 					
-				}else{%>
+				}
+				if(blB.size()==0){%>
 					<p class="text-center">게시물이 없습니다...
 				<%} %>
 				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=2&search=&p=1">더 보기 + </a>
@@ -109,8 +112,9 @@ ArrayList blC = (ArrayList)request.getAttribute("blistC");%>
 						</div>					
 					</div> 
 					<%}
-				}else{%>
-					<p class="text-center">게시물이 없습니다...
+				}
+				if(blC.size()==0){%>
+				<p class="text-center">게시물이 없습니다...
 				<%} %>
 				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=3&search=&p=1">더 보기 + </a>		
 			</div>

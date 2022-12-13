@@ -25,6 +25,59 @@ public class DAOBoard {
 		}
 		return instence;
 	}
+	//
+	public ArrayList<DTOBoard> boardList(HttpServletRequest req,String category,String search) {
+		PreparedStatement pstmt=null;
+		Connection con=null;
+		ResultSet rs=null;
+		String sql=null;
+		ArrayList<DTOBoard> list = new ArrayList<DTOBoard>();
+		try {
+			con=DBConnection.getconn();
+			if(search.equals("nosearch")) {
+				sql="select * from board where category = ? order by ref desc limit 0,6";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1,category);
+				rs = pstmt.executeQuery();
+			}else {
+				sql="select * from board where category = ? and (subject like ? or comment like ?) order by ref desc limit 0,6";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1,"1");
+				pstmt.setString(2,"%"+search+"%");
+				pstmt.setString(3,"%"+search+"%");
+				rs = pstmt.executeQuery();
+			}		
+			while(rs.next()) {
+				DTOBoard dto = new DTOBoard();
+				dto.setBno(rs.getInt("bno"));
+				dto.setId(rs.getString("id"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setComment(rs.getString("comment"));
+				dto.setCategory(rs.getString("category"));
+				dto.setRegDate(rs.getString("regDate"));
+				dto.setRef(rs.getInt("ref"));
+				dto.setUp(rs.getInt("up"));
+				dto.setDown(rs.getInt("down"));
+				dto.setGNS(rs.getString("GNS"));
+				dto.setFid(rs.getString("fid"));
+				dto.setThread(rs.getString("thread"));	
+				list.add(dto);
+			}
+			return list;
+		}catch (Exception e) {
+			System.out.println("boardList Error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt != null) pstmt.close();
+				if(con != null) con.close();
+				if(rs != null) rs.close();
+			}catch(Exception ex) {
+				throw new RuntimeException(ex.getMessage());
+			}			
+		}
+		return null;	
+	}
 	//게시글 등록
 	public void insertBoard(DTOBoard b,HttpServletResponse resp,String str) {	
 		PreparedStatement pstmt=null;

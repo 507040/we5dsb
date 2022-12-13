@@ -5,7 +5,6 @@
 		<div class="jumbotron jumbotron-fluid p-0 m-0 bg-white" style="display: flex;">
 			<a href="/"><img src="/resources/img/logo.jpg" class="img-fluid col-2" style="height:150px;"></a>
 			<form action="/Bloglist.do" class="form-inline my-2 my-lg-0 col-10" method="post">
-				<input type="hidden" name="p" value="1">
 				<input class="form-control mr-sm-2" id="searchInput" name="search" style="width: 80%;height:50px;" type="search" placeholder="검색어를 입력하세요" aria-label="Search">	
 	  			<button class="tomato" id="indextomato"  type="submit"><i class="bi bi-search"></i></button>
 	  		</form>					  

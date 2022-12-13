@@ -71,52 +71,66 @@ public class BlogController extends HttpServlet{
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/BMain.jsp");
 			rd.forward(req, resp);
 		}else if(command.equals("/Myblog.do")) {//개인블로그 메인페이지
-			getQuery(req);
+			//getQuery(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/Myblog.jsp");
 			rd.forward(req, resp);
 		}else if(command.equals("/BlogWrite.do")) {//글쓰기
 			String thread =req.getParameter("Thread");			
 			BoardWrite(req,resp,thread);			
-		}else if(command.equals("/Bloglist.do")) {
-			//DTOPage dp = new DTOPage(getCount("1"),3,Integer.parseInt(req.getParameter("PageNum")));//total,Amount,PageNum매게 변수를 가진 DTOPAGE
-			/*
-			 * int limit = null; try { if(limit==null) { limit = 0;
-			 * Integer.parseInt(req.getParameter("command")); }
-			 * 
-			 * Integer.parseInt(req.getParameter("offset")); }catch (Exception e) { // TODO:
-			 * handle exception }finally {
-			 * 
-			 * }
-			 */
-			
-			//listA(req,3,getCount("1"));
-			listA(req,Calp(req,getp(req),getCount("1"),3));
-			listB(req,Calp(req,getp(req),getCount("2"),3));
-			listC(req,Calp(req,getp(req),getCount("3"),3));
+		}else if(command.equals("/Bloglist.do")) {//카테고리 3개 인기글 6개
+			req.setAttribute("listA", boardListget(req,"1"));
+			req.setAttribute("listB", boardListget(req,"2"));
+			req.setAttribute("listC", boardListget(req,"3"));
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/list.jsp");
 			rd.forward(req, resp); 		
-		}else if(command.equals("/BloglistCategory.do")) {
-			String category = req.getParameter("category");		
-			String search = req.getParameter("search");			
-			
-			if(category.equals("1")){
-				if(search.equals("")) {listA(req,Calp(req,getp(req),getCount("1"),10));}
-				else{listA(req,Calp(req,getp(req),getCountsaerch("1",search),10));}				
-			}else if(category.equals("2")){
-				if(search.equals("")) {listB(req,Calp(req,getp(req),getCount("2"),10));}
-				else{listB(req,Calp(req,getp(req),getCountsaerch("2",search),10));}
-			}else if(category.equals("3")){
-				if(search.equals("")) {listC(req,Calp(req,getp(req),getCount("3"),10));}
-				else{listC(req,Calp(req,getp(req),getCountsaerch("3",search),10));}
-			}
+		}else if(command.equals("/BloglistCategory.do")) {//카테고리 별 전체 글
 			RequestDispatcher rd = req.getRequestDispatcher("/blog/listCategory.jsp");
 			rd.forward(req, resp);			
 		}else if(command.equals("/BoardUpdate.do")) {
 			System.out.println("게시글 수정:servlet");
 			updateBoard(req,resp);			
-		}
-				
+		}				
 	}
+	public ArrayList<DTOBoard> boardListget(HttpServletRequest req,String category) {
+		DAOBoard dao = DAOBoard.getInstence();		
+		return dao.boardList(req,category,getSearch(req));
+	}
+	//parameter search
+	public static String getSearch(HttpServletRequest req) {
+		String search=null;
+		try {
+			search = req.getParameter("search");
+			if(search==null||search.equals("")||search.trim().equals("")) {
+				search="nosearch";
+			}else {
+				search = req.getParameter("search");
+			}
+		}catch (Exception e) {
+			System.out.println("Search parameter error");
+			e.printStackTrace();
+		}
+		System.out.println("search:"+search);
+		return search;
+	}
+	//parameter p 
+	public static Integer getp(HttpServletRequest req) {
+		int p = 1;
+		try {
+			String reqP = req.getParameter("p");
+			//System.out.println("reqP:"+reqP);
+			if(reqP!=null) {
+				p=Integer.parseInt(reqP);
+			}
+			//System.out.println("reqBno:"+p);
+			
+		}catch (Exception e) {
+			System.out.println("쿼리 P 오류");
+			e.printStackTrace();
+		}
+		System.out.println("page_num:"+p);
+		return p;
+	}
+	
 	public void updateBoard(HttpServletRequest req,HttpServletResponse resp) {
 		DAOBoard d= DAOBoard.getInstence();		
 		DTOBoard dto = new DTOBoard();
@@ -142,51 +156,17 @@ public class BlogController extends HttpServlet{
 		d.updateBoard(req,resp,dto,href);
 		
 	}
-	
-	public Integer getp(HttpServletRequest req) {
-		int p = 0;
-		try {
-			String reqP = req.getParameter("P");
-			System.out.println("reqP:"+reqP);
-			if(reqP==null) {
-				p=0;
-			}else {
-				p=Integer.parseInt(reqP);
-			}
-			System.out.println("reqBno:"+p);
-			return p;
-		}catch (Exception e) {
-			System.out.println("쿼리 P 오류");
-			e.printStackTrace();
+	//DTOpage process
+		public static ArrayList<DTOPage> Calp(HttpServletRequest req,int p,int total,int Amount) {
+			
+			ArrayList<DTOPage> page = new ArrayList<DTOPage>();
+			DTOPage dtop =new DTOPage(p,total,Amount);	
+			page.add(dtop);
+			req.setAttribute("page", page);		
+			
+			return page;		
 		}
-		System.out.println("page_num:"+p);
-		return null;
-	}
-	public ArrayList<DTOPage> Calp(HttpServletRequest req,int p,int total,int Amount) {
-		
-		ArrayList<DTOPage> page = new ArrayList<DTOPage>();
-		DTOPage dtop =new DTOPage(p,total,Amount);	
-		page.add(dtop);
-		req.setAttribute("page", page);
-		
-		
-		return page;		
-	}
-	public void  BoardWrite(HttpServletRequest req,HttpServletResponse resp,String str) {
-		DAOBoard dao = DAOBoard.getInstence();
-		DTOBoard dto = new DTOBoard();
-		String fid = str.substring(0,1);
-		String thread = str.substring(1,2);
-		
-		dto.setId(req.getParameter("session_id"));
-		dto.setSubject(req.getParameter("subjectForm"));
-		dto.setComment(req.getParameter("commentForm"));
-		dto.setCategory(req.getParameter("category"));
-		dto.setGNS(req.getParameter("GNS"));
-		dto.setFid(fid);
-		dto.setThread(thread);
-		dao.insertBoard(dto,resp,str);		
-	}
+	//
 	public Integer getCountblog(HttpServletRequest req) {
 		DAOBoard dao = DAOBoard.getInstence();		
 		int cnt = 0;
@@ -200,27 +180,6 @@ public class BlogController extends HttpServlet{
 				
 		return null;
 	}
-	public Integer getCountsaerch(String category,String search) {
-		System.out.println("countsearch:"+category);
-		System.out.println("countsearch:"+search);
-		DAOBoard dao = DAOBoard.getInstence();
-		int cnt = dao.getCountSearch(category,search);
-		return cnt;
-	}
-	public Integer getCount(String category) {
-		DAOBoard dao = DAOBoard.getInstence();
-		int cnt = 0; 
-		try {
-			cnt = dao.getCount(category);
-			return cnt;
-		}catch (Exception e) {
-			System.out.println("count error");
-			e.printStackTrace();
-		}
-				
-		return null;
-	}
-	
 	public void getboard(HttpServletRequest req,String id,ArrayList<DTOPage> page) {
 		DAOBoard dao = new DAOBoard();
 		ArrayList<DTOBoard> getlist= dao.getboard(req,id,page);
@@ -229,7 +188,6 @@ public class BlogController extends HttpServlet{
 		}*/
 		req.setAttribute("boardlistAll", getlist);
 	}
-	
 	public void getboardlist(HttpServletRequest req,String id,String fid,String thread,ArrayList<DTOPage> page) {
 		DAOBoard dao = new DAOBoard();
 		ArrayList<DTOBoard> getboardlist= dao.getboardlist(req, id, fid, thread,page);
@@ -238,7 +196,6 @@ public class BlogController extends HttpServlet{
 		}*/
 		req.setAttribute("boardlist", getboardlist);
 	}
-	
 	public void listA(HttpServletRequest req,ArrayList<DTOPage> page) {
 		//,int limit,int offset
 		DAOBoard dao = DAOBoard.getInstence();
@@ -272,8 +229,6 @@ public class BlogController extends HttpServlet{
 				//new ArrayList<DTOBoard>();
 		//boardlist.add(dao.listA(req,category,limit,offset));
 	}
-	
-	
 	public void getlist(HttpServletRequest req,String id) {
 		DAOBlogList dao = DAOBlogList.getInstance();
 		
@@ -287,7 +242,6 @@ public class BlogController extends HttpServlet{
 		System.out.println("getlist");
 		
 	}
-	
 	public void getview(HttpServletRequest req ,int bno) {
 		DAOBoard d = new DAOBoard();		
 		System.out.println("getview");
@@ -296,7 +250,7 @@ public class BlogController extends HttpServlet{
 		for(DTOBoard v : view) {
 			ref = v.getRef();
 			
-			System.out.println("ref:"+ref);
+			//System.out.println("ref:"+ref);
 		}
 		d.refAdd(ref,bno);
 		req.setAttribute("view", view);
@@ -317,74 +271,23 @@ public class BlogController extends HttpServlet{
 		}
 		return null;
 	}
-	public String QueryCategory(HttpServletRequest req) {
-		String category = null;
-		try {
-			String reqcategory=req.getParameter("category");
-			if(reqcategory==null) {
-				category="noCategory";
-			}else {
-				category=reqcategory;
-			}
-			System.out.println("category:"+category);
-			return category;
-		}catch (Exception e) {
-			System.out.println("쿼리 category 오류");
-			e.printStackTrace();
-		}
-		return null;
-	}
-	public Integer Querybno(HttpServletRequest req) {
-		int bno = 0;
-		try {
-			String reqBno = req.getParameter("bno");
-			System.out.println("reqBno:"+reqBno);
-			if(reqBno==null) {
-				bno=0;
-			}else {
-				bno=Integer.parseInt(reqBno);
-			}
-			System.out.println("reqBno:"+bno);
-			return bno;
-		}catch (Exception e) {
-			System.out.println("쿼리 bno 오류");
-			e.printStackTrace();
-		}
-		return null;
+	//글쓰기
+	public void BoardWrite(HttpServletRequest req,HttpServletResponse resp,String str) {
+		DAOBoard dao = DAOBoard.getInstence();
+		DTOBoard dto = new DTOBoard();
+		String fid = str.substring(0,1);
+		String thread = str.substring(1,2);
+		
+		dto.setId(req.getParameter("session_id"));
+		dto.setSubject(req.getParameter("subjectForm"));
+		dto.setComment(req.getParameter("commentForm"));
+		dto.setCategory(req.getParameter("category"));
+		dto.setGNS(req.getParameter("GNS"));
+		dto.setFid(fid);
+		dto.setThread(thread);
+		dao.insertBoard(dto,resp,str);		
 	}
 	
-	public void getQuery(HttpServletRequest req) throws UnsupportedEncodingException {
-		String list = req.getParameter("list");				
-		String id = QueryId(req);
-		int bno =Querybno(req);
-		int p = getp(req);
-		String category = QueryCategory(req);
-		System.out.println("getP:"+p);
-		System.out.println("getcountblog:"+getCountblog(req));
-		
-		if(!id.equals("noId")) {//블로그 메인 게시판 리스트
-			System.out.println("블로그 id : "+id); 
-			getlist(req,id);
-		}
-		if(bno!=0) {//특정 글 보기
-			System.out.println(bno);
-			getview(req,bno);
-		}		
-		if(list.equals("0")) {//전체 게시물 가져오기
-			System.out.println(id);
-			getboard(req,id,Calp(req,1,getCountblog(req),20));
-			System.out.println("cnt:"+getCountblog(req));
-
-		}else {//특정 게시판 게시물 가져오기
-			String fid = list.substring(0,1);
-			String thread = list.substring(1,2);
-			System.out.println(fid);
-			System.out.println(thread);
-			getboardlist(req,id,fid,thread,Calp(req,1,getCountblog(req),20));
-			System.out.println(fid+":fid / "+thread+":thread");
-			
-		
-		}
 		
 		/* String query = req.getQueryString();
 		 * String queryString = URLDecoder.decode(query, "UTF-8");
@@ -432,8 +335,6 @@ public class BlogController extends HttpServlet{
 		 * } }
 		 */
 			
-	}
-
 	
 	
 	public void gettime(HttpServletRequest req,String regDate) {

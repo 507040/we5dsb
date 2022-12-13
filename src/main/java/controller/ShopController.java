@@ -68,7 +68,7 @@ public class ShopController extends HttpServlet {
 		}else if(command.equals("/ShopadminPage.pn")) {//상품관리자 메인
 			getchart(req);
 			productAdmin(req,10);
-			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/shopadminmain.jsp");
+			RequestDispatcher rd = req.getRequestDispatcher("/shop/ShopAdmin/view/shopadminmain2.jsp");
 			rd.forward(req, resp);			
 		}else if(command.equals("/Productadmin.pn")) {//shopAdmin 상품관리
 			productAdmin(req,20);
