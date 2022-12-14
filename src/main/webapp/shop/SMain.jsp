@@ -1,3 +1,4 @@
+<%@page import="model.dto.DTOShop"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -6,8 +7,8 @@
 ArrayList cnt = (ArrayList)request.getAttribute("plOrdercnt");
 ArrayList date = (ArrayList)request.getAttribute("plregDate");
 ArrayList sale = (ArrayList)request.getAttribute("plSale");
+Cookie[] co = request.getCookies();
 %>
-
 
 <main>
     <div class="col-12 row m-0 p-0">
@@ -25,8 +26,13 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 	                    	<c:if test="${csale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${c.sale}%</div>
 	                    	</c:if>	                    
-	                        <a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank"><img src="/resources/img/product/${c.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                        <br>${c.pName}<br></a><a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
+	                        <a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
+	                        	<img src="/resources/img/product/${c.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+	                        </a>
+	                        <a class="alt" href="/ShopPage.pn?pid=${c.id}" target="_blank">
+	                        	<br>${c.pName}<br>
+	                        </a>
+	                        <a class="alt" href="/productView.pn?pid=${c.pId}" target="_blank">
 	                        <c:if test="${csale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${c.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${c.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -48,8 +54,13 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 	                    	<c:if test="${dsale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${d.sale}%</div>
 	                    	</c:if>
-	                        <a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank"><img src="/resources/img/product/${d.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                       <br>${d.pName}<br></a><a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
+	                        <a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
+	                        	<img src="/resources/img/product/${d.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+                        	</a>
+	                        <a class="alt" href="/ShopPage.pn?pid=${d.id}" target="_blank">
+	                       		<br>${d.pName}<br>
+	                        </a>
+	                        <a class="alt" href="/productView.pn?pid=${d.pId}" target="_blank">
 	                        <c:if test="${dsale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${d.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${d.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -67,12 +78,17 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
                 <div class="col-12" style="display: flex;justify-content: space-around;border-radius: 5px;border:1px solid #bbb">
                     <c:forEach items="<%=sale %>" var="s"> 
                     <c:set value="${s.sale}" var="ssale"/>
-	                    <div class="item-sell col-2">
+	                    <div class="item-sell col-2" >
 	                    	<c:if test="${ssale != 0 }">
 	                    		<div class="text-center" style="border:5px solid tomato;margin:0 auto;align-items:center;vertical-align:middle;position:absolute;border-radius: 50%;background-color:tomato; width:40px;height: 40px;z-index: 1000;top:7px;left:22px;opacity: 80%">${s.sale}%</div>
-	                    	</c:if>
-	                        <a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank"><img src="/resources/img/product/${s.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
-	                        <br>${s.pName}<br></a><a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
+	                    	</c:if>	                    
+	                        <a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
+	                        	<img src="/resources/img/product/${s.pImg}" class="img img-tumbnail p-1 mb-2" style="width:100%;height:200px;">
+	                        </a>
+	                        <a class="alt" href="/ShopPage.pn?pid=${s.id}" target="_blank">
+	                       		<br>${s.pName}<br>
+	                        </a>
+	                        <a class="alt" href="/productView.pn?pid=${s.pId}" target="_blank">
 	                        <c:if test="${ssale != 0 }">
 	                        	<span style="text-decoration: line-through;color:gray;font-size: 12px;">${s.pPrice}원</span>&nbsp;&nbsp;<fmt:formatNumber value="${s.rePrice}" pattern="#"/>원<br>
 	                        </c:if>
@@ -87,16 +103,28 @@ ArrayList sale = (ArrayList)request.getAttribute("plSale");
 
 
         </div>		
-
         <div class="col-2 m-0 p-0 pr-4" id="rside">
-            <div class="rside col-12 p-0 m-0" style="display: flex;flex-wrap: wrap">
-
-                <div class="col-12 text-center  p-0 m-0 mb-2" style="border:1px solid #bbb;border-radius: 5px">
-                    <span><b>최근 본 상품</b></span>
-                    <div class="col-12 p-0 m-0"><a><img class="img"></a></div>
-                </div>
-
-                <div class="col-12 text-center p-0 m-0 mb-2" style="border:1px solid #bbb;border-radius: 5px">
+            <div class="rside col-12 p-0 m-0" style="display: flex;flex-wrap: wrap">				
+				<div class="col-12 text-center  p-0 m-0 mb-2" style="border:1px solid #bbb;border-radius: 5px">
+				<%if((co.length-1)!=0){ %>
+					<div class="text-center pb-2" style="border:3px solid tomato;margin:0 auto;align-items:center;vertical-align:top;position:absolute;border-radius: 50%;background-color:tomato; width:30px;height: 30px;z-index: 1000;top:2px;right:35px;opacity: 80%;">
+						<b><%=co.length-1%></b>
+					</div>
+				<%} %>
+					<a href="/viewed.pn" style="color:black"><span><b>최근 본 상품</b></span></a>	                    
+					<div class="col-12 p-0 m-0">
+						<div>
+					
+							<a href="/viewed.pn">								
+								<img class="img" style="width:100px;height:100px;" src="/resources/img/product/<%=request.getAttribute("cookieimg")%>"><br>
+								<p class="m-0 p-0 mb-2"><%=request.getAttribute("cookieNmae")%></p>
+							</a>
+					
+						 </div>
+					</div>
+				</div>
+			</div>
+				<div class="col-12 text-center p-0 m-0 mb-2" style="border:1px solid #bbb;border-radius: 5px">
                     <span><b>특가</b></span>
                     <div class="col-12 p-0 m-0">
                         <div class="block_rside">

@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +46,7 @@ public class ShopController extends HttpServlet {
 			productAdminOrdercnt(req,6,"orderCnt desc");
 			productAdminRegdate(req,6,"regDate desc");
 			productAdminSale(req,6,"sale desc");
+			getlastCookie(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/SMain.jsp");
 			rd.forward(req, resp);
 		}else if (command.equals("/cart.pn")) {//cart 메인
@@ -61,25 +63,8 @@ public class ShopController extends HttpServlet {
 			insertProduct(req,resp);
 			resp.sendRedirect("/productView.pn");
 		}else if(command.equals("/productView.pn")) {//특정상품 보기		
-			CookieManager co = new CookieManager();
 			HttpSession session = req.getSession();
-			ArrayList<String> cookie = new ArrayList<String>();
-			int i = 0;
-			while(true) {
-				if(co.getCookieName(req, "pid"+i)!=null){//등록쿠키 확인)					
-					co.getCookieValue(req, "pid"+i);
-					i++;
-				}else {
-					co.setCookie(req, resp, "pid"+i, Querypid(req));//쿠키등록
-					System.out.println("-------------------쿠키등록---------------------");
-					co.getCookieName(req, "pid"+i);
-					co.getCookieValue(req, "pid"+i);
-					cookie.add(co.getCookieValue(req, "pid"+i));//등록쿠키 확인
-					break;
-				}				
-			}
-			//co.deleteAllCookies(req, resp);
-			req.setAttribute("cookie", cookie);
+			addcookie(req,resp);
 			System.out.println("상품보기");		
 			productView(req,Querypid(req));			
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/productView.jsp");
@@ -103,6 +88,11 @@ public class ShopController extends HttpServlet {
 		}else if(command.equals("/ShopPage.pn")) {//shopPage main		
 			shopPageLisgt(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/shopPage.jsp");
+			rd.forward(req, resp);	
+		}
+		else if(command.equals("/viewed.pn")) {//shopPage main		
+			cookieview(req);
+			RequestDispatcher rd = req.getRequestDispatcher("/shop/viewedProduct.jsp");
 			rd.forward(req, resp);	
 		}
 		
@@ -256,11 +246,52 @@ public class ShopController extends HttpServlet {
 	//ShopPage
 	public void shopPageLisgt(HttpServletRequest req) {
 		DAOShop dao = DAOShop.getInstence();
-System.out.println(req.getParameter("owner"));
-		req.setAttribute("SList", dao.shopPageList(req)); 
-		
+		System.out.println(req.getParameter("owner"));
+		req.setAttribute("SList", dao.shopPageList(req)); 		
 	}
-	
+	//최근 본 상품
+	public void cookieview(HttpServletRequest req) {
+		System.out.println("viewed page");
+		DAOShop dao = new DAOShop();
+		Cookie[] co = req.getCookies();
+		ArrayList<DTOShop> list = new ArrayList<DTOShop>();
+		for(int i=0;i<co.length;i++) {
+			String value = co[i].getValue();
+			//System.out.println("cookies Value:"+value);
+			list.add(dao.cookieview(req,value));			
+		}
+		//for(DTOShop d :list) {
+		//	System.out.println("cookies pname:"+d.getpName());
+		//}
+		req.setAttribute("cookies", list);		
+	}	
+	public void getlastCookie(HttpServletRequest req) {
+		DAOShop dao = new DAOShop();	
+		DTOShop d =  dao.cookie(req);
+		if(d==null) {
+			req.setAttribute("cookieNmae", "상품이 없습니다....");
+		}else {
+			req.setAttribute("cookieNmae", d.getpName());
+			req.setAttribute("cookieimg", d.getpImg());		
+		}			
+	}
+	//최근 본 상품 추가(쿠키)
+	public void addcookie(HttpServletRequest req,HttpServletResponse resp) {
+		int i = 0;
+		while(true) {
+			CookieManager co = new CookieManager();
+			if(co.getCookieName(req, "pid"+i)!=null){//등록쿠키 확인)					
+				co.getCookieValue(req, "pid"+i);
+				i++;
+			}else {
+				co.setCookie(req, resp, "pid"+i, Querypid(req));//쿠키등록
+				System.out.println("-------------------쿠키등록---------------------");
+				co.getCookieName(req, "pid"+i);
+				co.getCookieValue(req, "pid"+i);
+				break;
+			}				
+		}
+	}
 	
 }
 

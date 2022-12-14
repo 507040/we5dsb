@@ -7,9 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.jdt.internal.compiler.parser.diagnose.DiagnoseParser;
+
+import com.mysql.cj.jdbc.JdbcConnection;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 
 import controller.LoggableStatement;
@@ -363,6 +367,93 @@ public class DAOShop {
 				
 			}			
 		}		
+	}
+	public DTOShop cookie(HttpServletRequest req) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		ResultSet rs = null;			
+		Cookie[] cookies = req.getCookies();
+		int colen = cookies.length;
+		String value = cookies[colen-1].getValue(); 
+		System.out.println("GetCookiesValue:"+value);
+		DTOShop d = new DTOShop();
+		try {
+			con=DBConnection.getconn();
+			sql="select * from product where pID=?";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, value);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {				
+				d.setpId(rs.getString("pID"));
+				d.setpName(rs.getString("pName"));
+				d.setpPrice(rs.getInt("pPrice"));
+				d.setId(rs.getString("id"));
+				d.setOrderCnt(rs.getInt("orderCnt"));
+				d.setpImg(rs.getString("pImg"));	
+				d.setSale(rs.getInt("sale"));
+				d.setpContent(rs.getString("pContent"));
+				if(d.getSale()!=0) {
+					d.setRePrice(d.getpPrice(), d.getSale());
+				}							
+			};
+			
+		}catch (Exception e) {
+			System.out.println("cookieViewMain Error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}			
+		}
+		return d;
+	}
+	//최근 본 삼품
+	public DTOShop cookieview(HttpServletRequest req, String value){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		ResultSet rs = null;			
+		System.out.println("parameter Value:"+value);
+		DTOShop d = new DTOShop();
+		try {
+			con=DBConnection.getconn();
+			sql="select * from product where pID=?";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, value);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {				
+				d.setpId(rs.getString("pID"));
+				d.setpName(rs.getString("pName"));
+				d.setpPrice(rs.getInt("pPrice"));
+				d.setId(rs.getString("id"));
+				d.setOrderCnt(rs.getInt("orderCnt"));
+				d.setpImg(rs.getString("pImg"));	
+				d.setSale(rs.getInt("sale"));
+				d.setpContent(rs.getString("pContent"));
+				if(d.getSale()!=0) {
+					d.setRePrice(d.getpPrice(), d.getSale());
+				}							
+			};
+			
+		}catch (Exception e) {
+			System.out.println("cookieview Error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)pstmt.close();
+			}catch (Exception e) {
+				
+			}			
+		}
+		return d;
+		
 	}
 	//ShopPageList get
 	public ArrayList<DTOShopPage> shopPageList(HttpServletRequest req) {
