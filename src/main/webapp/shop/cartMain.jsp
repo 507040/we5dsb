@@ -71,7 +71,7 @@
 	                </td>
 	                <!--합계-->
 	                <td>
-	                	<input type="text" name="sumprice" id="sumprice" value='${c.sumPrice}'>	                    
+	                	${c.sumPrice}	                    
 	                </td>
 	                <!--선택-->
 	                <td style="display: flex;flex-wrap:wrap">
