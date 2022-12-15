@@ -20,7 +20,7 @@ int favor = sp.getFavorites();
              <div class="container">
 	             <div class="row">	             	
 	                    <div style="border-bottom: 1px solid black;" class="col-12 p-2 mb-3">
-	                        <img class="img" style="width:100%;height:130px;object-fit: fill;" src="‪D:\java\project\src\main\webapp\resources\img\1.jpg">
+	                        <img class="img" style="width:100%;height:130px;object-fit: fill;" src="/resources/img/shopProdfile/1.jpg">
 	                        <p class="text-center mb-1" style="font-weight: bold"><%=id %></p>
 	                        <p class="mb-1 text-center"><%=content %></p>
 	                        <p class="text-center">방문자 : <%=vister %>&nbsp;&nbsp;&nbsp;즐겨찾기 : <%=favor %></p>

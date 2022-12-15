@@ -49,10 +49,19 @@ public class ShopController extends HttpServlet {
 			getlastCookie(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/SMain.jsp");
 			rd.forward(req, resp);
+		}else if (command.equals("/cartProcess.pn")) {//cart 등록	
+			System.out.println("cart등록");
+			addCartProduct(req);
+			resp.sendRedirect("/cart.pn");
 		}else if (command.equals("/cart.pn")) {//cart 메인
+			//*******************************************
+			getCartList(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/cartMain.jsp");
 			rd.forward(req, resp);
-		}else if (command.equals("/order.pn")) {//order 메인
+		}else if (command.equals("/productCntupdate.pn")) {
+			updateCnt(req);			
+		}
+		else if (command.equals("/order.pn")) {//order 메인
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/order.jsp");
 			rd.forward(req, resp);
 		}else if (command.equals("/Product.pn")) {//상품등록			
@@ -62,11 +71,12 @@ public class ShopController extends HttpServlet {
 			System.out.println("상품 업로드");			
 			insertProduct(req,resp);
 			resp.sendRedirect("/productView.pn");
-		}else if(command.equals("/productView.pn")) {//특정상품 보기		
+		}else if(command.equals("/productView.pn")) {//특정상품 보기			
 			HttpSession session = req.getSession();
-			addcookie(req,resp);
-			System.out.println("상품보기");		
-			productView(req,Querypid(req));			
+			System.out.println("-----------------------상품 보기------------------------------");
+			addcookie(req,resp);				
+			productView(req,Querypid(req));
+			System.out.println("-----------------------상품 끝------------------------------");
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/productView.jsp");
 			rd.forward(req, resp);
 		}else if(command.equals("/productUpdate.pn")) {//상품 업데이트
@@ -89,13 +99,15 @@ public class ShopController extends HttpServlet {
 			shopPageLisgt(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/shopPage.jsp");
 			rd.forward(req, resp);	
-		}
-		else if(command.equals("/viewed.pn")) {//shopPage main		
+		}else if(command.equals("/viewed.pn")) {//shopPage main		
 			cookieview(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/shop/viewedProduct.jsp");
 			rd.forward(req, resp);	
 		}
-		
+	}
+	public void updateCnt(HttpServletRequest req) {
+		DAOShop dao=DAOShop.getInstence();
+		dao.updateCnt(req);
 	}
 	public String Querypid(HttpServletRequest req) {
 		HttpSession session = req.getSession(true);		
@@ -256,9 +268,12 @@ public class ShopController extends HttpServlet {
 		Cookie[] co = req.getCookies();
 		ArrayList<DTOShop> list = new ArrayList<DTOShop>();
 		for(int i=0;i<co.length;i++) {
+			String name = co[i].getName();		
 			String value = co[i].getValue();
+			if(!name.equals("JSESSIONID")) {
 			//System.out.println("cookies Value:"+value);
-			list.add(dao.cookieview(req,value));			
+			list.add(dao.cookieview(req,value));
+			}
 		}
 		//for(DTOShop d :list) {
 		//	System.out.println("cookies pname:"+d.getpName());
@@ -266,7 +281,7 @@ public class ShopController extends HttpServlet {
 		req.setAttribute("cookies", list);		
 	}	
 	public void getlastCookie(HttpServletRequest req) {
-		DAOShop dao = new DAOShop();	
+		DAOShop dao = DAOShop.getInstence();	
 		DTOShop d =  dao.cookie(req);
 		if(d==null) {
 			req.setAttribute("cookieNmae", "상품이 없습니다....");
@@ -292,6 +307,13 @@ public class ShopController extends HttpServlet {
 			}				
 		}
 	}
-	
+	public void addCartProduct(HttpServletRequest req) {
+		DAOShop dao = DAOShop.getInstence();
+		dao.addCartProduct(req);			
+	}	
+	public void getCartList(HttpServletRequest req) {
+		DAOShop dao = DAOShop.getInstence();
+		req.setAttribute("clist", dao.getCartList(req));
+	}
 }
 

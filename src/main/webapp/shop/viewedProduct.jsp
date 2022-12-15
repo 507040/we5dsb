@@ -78,13 +78,16 @@ ArrayList cookieList = (ArrayList)request.getAttribute("cookies");
 </body>
 <script>
 $('document').ready(function(){
-	var vla = $('#cookieValue').val();
-	//vla==null||||vla.trim().eq("")
-	if(vla==""){
-		$('#cookieValue').parent().hide();	
-	}
-	
-	
+	var grpl = $('input[id=cookieValue]').length;	
+		//배열 생성
+		var grparr = new Array(grpl);
+		//배열에 값 주입
+		for(var i=0; i<grpl; i++){                          
+			grparr[i] = $('input[id=cookieValue]').eq(i).val();			      
+			if($('input[id=cookieValue]').eq(i).val()==""){				
+				$(this).parent().css("display","none");
+			}
+		}
 });
 </script>
 </html>

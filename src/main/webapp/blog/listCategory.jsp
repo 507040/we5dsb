@@ -116,7 +116,7 @@
 				<% }%>
 			</div>
 			
-			<div class="col-12">
+			<div class="col-12 pt-2">
 			<table>
 			<%
 			if(pagelist!=null){

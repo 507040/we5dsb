@@ -18,6 +18,7 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 
 import controller.LoggableStatement;
 import database.DBConnection;
+import model.dto.DTOCart;
 import model.dto.DTOPage;
 import model.dto.DTOShop;
 import model.dto.DTOShopPage;
@@ -376,6 +377,12 @@ public class DAOShop {
 		Cookie[] cookies = req.getCookies();
 		int colen = cookies.length;
 		String value = cookies[colen-1].getValue(); 
+		String name = cookies[colen-1].getName();
+		if(name.equals("JSESSIONID")) {
+			name = cookies[colen-2].getName();
+			value = cookies[colen-2].getValue();
+		}
+		System.out.println(name);
 		System.out.println("GetCookiesValue:"+value);
 		DTOShop d = new DTOShop();
 		try {
@@ -460,52 +467,54 @@ public class DAOShop {
 		Connection con = null;
 		PreparedStatement pstmt = null;		
 		String sql = null;
-		ResultSet rs = null;
-		ArrayList<DTOShopPage> list= new ArrayList<DTOShopPage>();
+		ResultSet rs = null;		
 		SimpleDateFormat asddasd = new SimpleDateFormat("yyMMdd");		
-		String owner = req.getParameter("owner");		
+		String owner = req.getParameter("O");		
 		try {
-		con=DBConnection.getconn();
-		sql="select s.id as id"
-				+ ", s.centent as centent"
-				+ ", s.visiter as vister"
-				+ ", s.regDate as regDate"
-				+ ", s.img as img" 
-				+ ", s.Favorites as favorites"
-				+ ", p.pID as pid"
-				+ ", p.pName as pname"
-				+ ", p.pPrice as price"
-				+ ", p.pImg as pimg"
-				+ ", p.pContent as pcontent"
-				+ ", p.sale as sale"
-				+ ", p.pInStrok as instork"
-				+ ", p.category as category"
-				+ ", p.orderCnt as ordercnt "
-				+ " from shop as s, product as p"
-				+ " where s.id = ?";		
-		pstmt=con.prepareStatement(sql);
-		pstmt.setString(1, owner);
-		rs = pstmt.executeQuery();
-		while(rs.next()) {
-			DTOShopPage d = new DTOShopPage();
-			String regd = asddasd.format(rs.getTimestamp("regDate")); 
-			d.setId(rs.getString("id"));
-			d.setCentent(rs.getString("centent"));
-			d.setVister(rs.getInt("vister"));
-			d.setRegDate(regd);
-			d.setImg(rs.getString("img"));
-			d.setFavorites(rs.getInt("favorites"));
-			d.setPid(rs.getString("pid"));
-			d.setPname(rs.getString("pname"));
-			d.setPrice(rs.getInt("price"));
-			d.setPimg(rs.getString("pimg"));
-			d.setPcontent(rs.getString("pcontent"));
-			d.setSale(rs.getInt("sale"));
-			d.setInstork(rs.getInt("instork"));
-			d.setCatergory(rs.getString("category"));
-			d.setOrdercnt(rs.getInt("orderCnt"));
-			list.add(d);
-		}
+			ArrayList<DTOShopPage> list= new ArrayList<DTOShopPage>();
+			con=DBConnection.getconn();
+			sql="select s.id as id"
+					+ ", s.centent as centent"
+					+ ", s.visiter as vister"
+					+ ", s.regDate as regDate"
+					+ ", s.img as img" 
+					+ ", s.Favorites as favorites"
+					+ ", p.pID as pid"
+					+ ", p.pName as pname"
+					+ ", p.pPrice as price"
+					+ ", p.pImg as pimg"
+					+ ", p.pContent as pcontent"
+					+ ", p.sale as sale"
+					+ ", p.pInStrok as instork"
+					+ ", p.category as category"
+					+ ", p.orderCnt as ordercnt "
+					+ " from shop as s, product as p"
+					+ " where s.id = ?";		
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, owner);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				DTOShopPage d = new DTOShopPage();
+				String regd = asddasd.format(rs.getTimestamp("regDate")); 
+				d.setId(rs.getString("id"));
+				d.setCentent(rs.getString("centent"));
+				d.setVister(rs.getInt("vister"));
+				d.setRegDate(regd);
+				d.setImg(rs.getString("img"));
+				d.setFavorites(rs.getInt("favorites"));
+				d.setPid(rs.getString("pid"));
+				d.setPname(rs.getString("pname"));
+				d.setPrice(rs.getInt("price"));
+				d.setPimg(rs.getString("pimg"));
+				d.setPcontent(rs.getString("pcontent"));
+				d.setSale(rs.getInt("sale"));
+				d.setInstork(rs.getInt("instork"));
+				d.setCatergory(rs.getString("category"));
+				d.setOrdercnt(rs.getInt("orderCnt"));
+				list.add(d);
+				System.out.println("id");
+			}
+			return list;
 		}catch (Exception e) {
 			System.out.println("shopPage Get List error");
 			e.printStackTrace();
@@ -518,8 +527,125 @@ public class DAOShop {
 				
 			}
 		}
-		return list;	
+		return null;	
 	}
+	public void addCartProduct(HttpServletRequest req) {
+		Connection con = null;
+		PreparedStatement pstmt=null;
+		String sql = null;
+		String ordercnt =req.getParameter("ordercnt");
+		int cnt = 1;
+		if(ordercnt!=null) {			
+			cnt = Integer.parseInt(ordercnt);
+		}
+		System.out.println("cart등록:"+req.getParameter("pid"));
+		System.out.println("cart등록 id:"+req.getParameter("id"));
+		System.out.println("cnt:"+cnt);
+		try {
+			con=DBConnection.getconn();
+			sql="insert into tbl_cart(id,pid,ordercnt) value(?,?,?)";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, req.getParameter("id"));
+			pstmt.setString(2, req.getParameter("pid"));
+			pstmt.setInt(3, cnt);
+			pstmt.executeUpdate();									
+		}catch (Exception e) {
+			System.out.println("cart insert error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt != null)pstmt.close();
+				if(con != null)con.close();
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+	}
+	public ArrayList<DTOCart> getCartList(HttpServletRequest req) {
+	HttpSession session = req.getSession();
+	String sql=null;
+	Connection con = null;
+	PreparedStatement pstmt=null;
+	ResultSet rs = null;
+	ArrayList<DTOCart> list = new ArrayList<DTOCart>();
+		try {
+			con = DBConnection.getconn();			
+			sql ="select p.pId as pid"
+					+ ",c.id as id"					
+					+ ",c.ordercnt as cnt"
+					+ ",p.pName as name"
+					+ ",p.id as owner"
+					+ ",p.sale as sale"
+					+ ",p.pInStrok as instork"
+					+ ",p.pPrice as price"
+					+ ",p.pImg as img"
+					+ " from tbl_cart as c,product as p"
+					+ " where c.pid = p.pID and c.id=?";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, (String)session.getAttribute("id"));
+			rs=pstmt.executeQuery();			
+			while(rs.next()) {
+				DTOCart c = new DTOCart();
+				c.setId(rs.getString("id"));
+				c.setName(rs.getString("name"));
+				c.setCnt(rs.getInt("cnt"));
+				c.setOwner(rs.getString("owner"));
+				c.setSale(rs.getInt("sale"));
+				c.setInstork(rs.getInt("instork"));
+				c.setPrice(rs.getInt("price"));
+				c.setImg(rs.getString("img"));
+				if(rs.getInt("sale")!=0) {//세일이 없을때
+					c.setRePrice(rs.getInt("sale"),rs.getInt("price") );
+					c.setSumPrice(c.getRePrice(), rs.getInt("cnt"));
+				}else {
+					c.setSumPrice(rs.getInt("price"), rs.getInt("cnt"));
+				}
+				list.add(c);
+			}
+		}catch (Exception e) {
+			System.out.println("Cart List Error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)con.close();
+			}catch (Exception e){
+				
+			}
+		}
+		return list;
+	}
+	public void updateCnt(HttpServletRequest req) {
+		Connection con =null;
+		PreparedStatement pstmt=null;
+		String sql = null;
+		try {
+			con=DBConnection.getconn();
+			sql="update tbl_cart set ordercnt=? where pid=?";
+			pstmt=con.prepareStatement(sql);
+			pstmt.setInt(1, Integer.parseInt(req.getParameter("cnt")));
+			pstmt.setString(2, req.getParameter("pid"));
+			pstmt.executeUpdate();
+			
+			System.out.println("cart Cnt update");
+		
+		}catch (Exception e) {
+			System.out.println("cart product update error");
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(con!=null)con.close();
+			}catch (Exception e) {
+ 
+			}
+		}
+		
+	}
+	
+			
+	
 	
 	public static String getOrderby(HttpServletRequest req) {
 		String ob = null;
