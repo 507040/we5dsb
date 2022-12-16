@@ -374,13 +374,14 @@ public class DAOShop {
 		PreparedStatement pstmt = null;
 		String sql = null;
 		ResultSet rs = null;			
-		Cookie[] cookies = req.getCookies();
-		int colen = cookies.length;
-		String value = cookies[colen-1].getValue(); 
-		String name = cookies[colen-1].getName();
-		if(name.equals("JSESSIONID")) {
-			name = cookies[colen-2].getName();
-			value = cookies[colen-2].getValue();
+		Cookie[] cookies = req.getCookies();		
+		int colen = (cookies.length)-1;
+		System.out.println(colen);
+		String value = cookies[colen].getValue(); 
+		String name = cookies[colen].getName();
+		if(name.equals("JSESSIONID")&&colen>0) {
+			name = cookies[colen-1].getName();
+			value = cookies[colen-1].getValue();
 		}
 		System.out.println(name);
 		System.out.println("GetCookiesValue:"+value);
@@ -595,8 +596,9 @@ public class DAOShop {
 				c.setPrice(rs.getInt("price"));
 				c.setImg(rs.getString("img"));
 				if(rs.getInt("sale")!=0) {//세일이 없을때
-					c.setRePrice(rs.getInt("sale"),rs.getInt("price") );
+					c.setRePrice(rs.getInt("sale"),rs.getInt("price"));
 					c.setSumPrice(c.getRePrice(), rs.getInt("cnt"));
+					c.setSalePrice(rs.getInt("sale"), rs.getInt("price"));
 				}else {
 					c.setSumPrice(rs.getInt("price"), rs.getInt("cnt"));
 				}

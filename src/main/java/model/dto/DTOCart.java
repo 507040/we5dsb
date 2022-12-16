@@ -11,6 +11,17 @@ public class DTOCart {
 	private String img;
 	private int rePrice;
 	private int sumPrice;
+	private int salePrice;
+	
+	
+	
+	
+	public int getSalePrice() {
+		return salePrice;
+	}
+	public void setSalePrice(int sale,int price) {
+		this.salePrice = price/sale;
+	}
 	public String getId() {
 		return id;
 	}

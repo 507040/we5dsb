@@ -49,7 +49,7 @@ ArrayList blC = (ArrayList)request.getAttribute("listC");
 					<p class="text-center">게시물이 없습니다...
 					<%} %>
 				
-				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=1&search=&p=1">더 보기 + </a>
+				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?c=1&search=<%=request.getParameter("search") %>&p=1">더 보기 + </a>
 			</div>               
 			     
 			<div class="sec" style="border-bottom: 1px solid #ddd">
@@ -83,7 +83,7 @@ ArrayList blC = (ArrayList)request.getAttribute("listC");
 				if(blB.size()==0){%>
 					<p class="text-center">게시물이 없습니다...
 				<%} %>
-				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=2&search=&p=1">더 보기 + </a>
+				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?c=2&search=<%=request.getParameter("search") %>&p=1">더 보기 + </a>
 			</div>
 			     
 			<div class="thi">
@@ -116,7 +116,7 @@ ArrayList blC = (ArrayList)request.getAttribute("listC");
 				if(blC.size()==0){%>
 				<p class="text-center">게시물이 없습니다...
 				<%} %>
-				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?category=3&search=&p=1">더 보기 + </a>		
+				<p class="text-right text-primary mb-0"><a href="/BloglistCategory.do?c=3&search=<%=request.getParameter("search") %>&p=1">더 보기 + </a>		
 			</div>
 			
 			</div>

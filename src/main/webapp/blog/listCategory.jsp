@@ -15,8 +15,7 @@
 		boardlist = (ArrayList)request.getAttribute("blistB");//블로그 리스트 가져오기
 	}else if(category.equals("3")){
 		boardlist = (ArrayList)request.getAttribute("blistC");//블로그 리스트 가져오기
-	}
-	
+	}	
 	ArrayList pagelist = (ArrayList)request.getAttribute("page");
 %>
 <!DOCTYPE html>
@@ -149,15 +148,15 @@
 									<span class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:black;cursor: default;" ><i class="bi bi-chevron-left"></i></span>
 								</c:when>
 								<c:otherwise>
-									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${prevPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-left"></i></a>						
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&search=<%=request.getParameter("search") %>&p=${prevPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-left"></i></a>						
 								</c:otherwise>				
 							</c:choose>				
 							<c:forEach var="page" begin="${startPage}" step="1" end="${endPage}">
 								<c:if test='${page != pagenum}'>								
-									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:black;"><c:out value="${page}"/></a>
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&search=<%=request.getParameter("search") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:black;"><c:out value="${page}"/></a>
 								</c:if>
 								<c:if test='${page == pagenum}'>								
-									<a href="/BloglistCategory.do.pn?c=<%=request.getParameter("c") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:#007bff;"><c:out value="${page}"/></a>
+									<a href="/BloglistCategory.do.pn?c=<%=request.getParameter("c") %>&search=<%=request.getParameter("search") %>&p=${page}" id="pagingnum" class="btn btn-sm" data-page="${page}" style="color:#007bff;"><c:out value="${page}"/></a>
 								</c:if>
 							</c:forEach>
 							<c:choose>
@@ -165,7 +164,7 @@
 									<span class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:black;cursor: default;" ><i class="bi bi-chevron-right"></i></span>
 								</c:when>
 								<c:otherwise>
-									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&p=${nextPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-right"></i></a>						
+									<a href="/BloglistCategory.do?c=<%=request.getParameter("c") %>&search=<%=request.getParameter("search") %>&p=${nextPage}" class="btn btn-sm" data-page="${page}" style="vertical-align: middle;height:30px;border:1px solid #ddd;border-radius:5px;color:#007bff"><i class="bi bi-chevron-right"></i></a>						
 								</c:otherwise>				
 							</c:choose>
 						</c:if>

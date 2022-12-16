@@ -12,23 +12,11 @@
     type: 'line',
     data: {
       labels: [
-    	    	 <%for(int i=0;i<chart.size();i++){
-    	    		 DTOShop d = (DTOShop)chart.get(i);%>
-    	    		 <%if(chart.size()==10){%>
-    	    		 '<%=d.getpName()%>'
-    	    		 <%}%>
-    	    		 '<%=d.getpName()%>',   	    		 
-    	    	 <%}%>
+    	    	 
     	      ],
     	      datasets: [{
     	        data: [
-    	        	<%for(int i=0;i<chart.size();i++){
-       	    		 DTOShop d = (DTOShop)chart.get(i);%>
-       	    		 <%if(chart.size()==10){%>
-       	    		 '<%=d.getSum()%>'
-       	    		 <%}%>
-       	    		 '<%=d.getSum()%>',   	    		 
-       	    	 <%}%>
+    	        	
     	        ],
         lineTension: 0,
         backgroundColor: 'transparent',
